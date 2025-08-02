@@ -581,7 +581,7 @@ export const postVerifyOtp = async (req, res) => {
         const mailOptions = {
             from: process.env.SUPPORT_MAIL,
             to: newUser.email,
-            subject: "Welcome to MillionDollarFan – Your Account Has Been Created",
+            subject: "Welcome to product-eCommerce – Your Account Has Been Created",
             html: mailFile,
         };
         sendMail(mailOptions);
