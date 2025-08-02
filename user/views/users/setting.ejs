@@ -1,0 +1,312 @@
+<%-include('./header.ejs')%>
+<section class="static-data-main">
+    <div class="container">
+        <div class="static-data">
+            <div class="static-data-card">
+                <div class="s-data-content">
+                    <div class="s-data-icon">
+                        <img src="/images/icon-list.svg" alt="">
+                    </div>
+                    <div class="s-data">
+                        <p>Total Entries</p>
+                        <h4><%= body?.freeEntries + body?.paidEntries %></h4>
+                    </div>
+                </div>
+                <div class="s-data-label">
+                    <%= body?.freeEntries %> free, <%= body?.paidEntries %> paid
+                </div>
+            </div>
+            <div class="static-data-card">
+                <div class="s-data-content">
+                    <div class="s-data-icon">
+                        <img src="/images/icon-happy.svg" alt="">
+                    </div>
+                    <div class="s-data">
+                        <p>Active Celebrities</p>
+                        <h4><%= body?.activeCelebrities || 0 %></h4>
+                    </div>
+                </div>
+                <div class="s-data-label">With entries claimed</div>
+            </div>
+            <div class="static-data-card">
+                <div class="s-data-content">
+                    <div class="s-data-icon">
+                        <img src="/images/icon-gift-send.svg" alt="">
+                    </div>
+                    <div class="s-data">
+                        <p>Gifts Received</p>
+                        <h4><%= body?.giftCardReceived %></h4>
+                    </div>
+                </div>
+                <div class="s-data-label">From friends</div>
+            </div>
+            <div class="static-data-card">
+                <div class="s-data-content">
+                    <div class="s-data-icon right">
+                        <img src="/images/icon-gift-send.svg" alt="">
+                    </div>
+                    <div class="s-data">
+                        <p>Gifts Sent</p>
+                        <h4><%= body?.giftCardSent %></h4>
+                    </div>
+                </div>
+                <div class="s-data-label">To friends</div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="setting-main">
+    <div class="container">
+        <div class="page-heading">
+            <h1>My Settings</h1>
+        </div>
+        <div class="setting-wrapper">
+            <div class="setting-nav">
+                <div class="setting-nav-items" role="tablist">
+                    <button class="s-nav-link active" id="profile-tab" data-bs-toggle="pill" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true"><span class="nav-link-img"><img src="/images/user.svg" alt=""></span>
+                        Profile
+                    </button>
+                    <button class="s-nav-link" id="security-tab" data-bs-toggle="pill" data-bs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">
+                        <span class="nav-link-img"><img src="/images/icon-shild.svg" alt=""></span> Security
+                    </button>
+                    <button class="s-nav-link" id="mf-gift-tab" data-bs-toggle="pill" data-bs-target="#mf-gift" type="button" role="tab" aria-controls="mf-gift" aria-selected="false"><span class="nav-link-img"><img src="/images/icon-gift-lg.svg" alt=""></span> <span><span class="d-none d-md-inline">My</span> Gift
+                        card</span>
+                    </button>
+                    <button class="s-nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="false"><span class="nav-link-img"><img src="/images/icon-ticket.svg" alt=""></span> My
+                        Tickets
+                    </button>
+                </div>
+                <p class="text-center mt-3">Member since <%= new Date(body?.user.created_at).toLocaleDateString('en-IN') %></p>
+            </div>
+
+            <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="td-container">
+                        <div class="td-card bg-transparent">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="title-wrapper mb-4">
+                                    <h4 class="mb-0">Profile Information</h4>
+                                    <p class="fs-18">Your account details</p>
+                                </div>
+                                <div class="action-btn d-flex align-items-center gap-3">
+                                    <button class="edit-btn outline d-none" id="cancle-btn">Cancel</button>
+                                    <button class="edit-btn d-none" id="save-btn">Save</button>
+                                    <button class="edit-btn" id="edit-profile-btn">Edit</button>
+                                </div>
+                            </div>
+                            <div class="profile-section">
+                                <div class="row g-4">
+                                    <div class="col-lg-6 mt-3 mt-lg-1">
+                                        <div class="inp-group">
+                                            <label for="">Full Name</label>
+                                            <div class="input-wrapper">
+                                                <input type="text" id="full-name" placeholder="John Doe" value="<%= body?.user.userName || '' %>" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 mt-lg-1">
+                                        <div class="inp-group">
+                                            <label for="">Email</label>
+                                            <div class="input-wrapper">
+                                                <input type="email" placeholder="john@gmail.com" id="email-input" value="<%= body?.user.email || '' %>" disabled>
+                                                <div class="inp-elm">
+                                                    <img src="/images/icon-verified.svg" alt="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="inp-group">
+                                            <label for="countryDropdown" class="form-label">Country</label>
+                                            <div class="dropdown w-100 text-start" id="countryDropdown">
+                                                <div class="dropdown-toggle input-wrapper" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" disabled>
+                                                    <span id="selected-country">
+                                                        <%= body?.user?.country || 'Select Country' %>
+                                                    </span>
+                                                </div>
+
+                                                <div class="dropdown-menu w-100 country-scroll p-2" aria-labelledby="countryDropdown" style="height: auto; max-height: 350px; overflow-x: scroll;">
+                                                    <input type="text" class="form-control mb-2" id="countrySearchInput" placeholder="Search country...">
+                                                    <ul class="list-unstyled mb-0 h-25" id="countryList">
+                                                        <% body?.countries?.forEach(function(country) { %>
+                                                            <li>
+                                                                <a class="dropdown-item country-item" href="#" data-value="<%= country %>">
+                                                                    <%= country %>
+                                                                </a>
+                                                            </li>
+                                                        <% }); %>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="country" id="countryInput" value="<%= body?.user?.country || '' %>">
+                                        </div>
+                                    </div>
+
+                                    <!-- Age -->
+                                    <div class="col-lg-6">
+                                        <div class="inp-group">
+                                            <label for="">Age</label>
+                                            <div class="input-wrapper">
+                                                <input type="number" placeholder="25" value="<%= body?.user.age || 0 %>" id="age" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Mailing Address -->
+                                    <div class="col-12">
+                                        <div class="inp-group">
+                                            <label for="">Mailing Address</label>
+                                            <div class="input-wrapper h-100">
+                                                <textarea id="address" rows="2" placeholder="329, Howe Street #1434 Vancouver, BC V6C3N2, Canada" disabled><%= body?.user?.address %></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
+                    <div class="td-container-test">
+                        <div class="d-flex flex-column gap-3">
+                            <div class="td-card bg-transparent">
+                                <h4>Security Setup</h4>
+                                <div class="security-action-container">
+                                    <div class="security-items">
+                                        <div class="sec-item-name">
+                                            <div class="sec-item-img">
+                                                <img src="/images/grd-icon-lock.png" alt="">
+                                            </div>
+                                            <div class="sec-item">
+                                                <p>Change Password</p>
+                                                <span>Update your account password for security.</span>
+                                            </div>
+                                        </div>
+                                        <button class="app-btn" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                                            Change Password
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="security-action-container">
+                                    <div class="security-items">
+                                        <div class="sec-item-name">
+                                            <div class="sec-item-img">
+                                                <img src="/images/grd-icon-shild.png" alt="">
+                                            </div>
+                                            <div class="sec-item">
+                                                <p>Two-factor Authentication</p>
+                                                <span>Enable Two-factor to protect your account from unauthorized access.</span>
+                                            </div>
+                                        </div>
+                                        <% if (!body?.user?.google2faStatus) { %>
+                                            <button class="app-btn" data-bs-toggle="modal" data-bs-target="#twofaModal" id="enable-btn">
+                                                Enable 2FA
+                                            </button>
+                                        <% } else { %>
+                                            <button class="app-btn" data-bs-toggle="modal" data-bs-target="#diasble-2Fa-modal" id="disable-btn">
+                                                Disable 2FA
+                                            </button>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="td-card bg-transparent">
+                                <div class="security-items d-flex align-items-center justify-content-between mb-4">
+                                    <h4 class="mb-0">Sessions</h4>
+                                    <button class="app-btn" data-bs-toggle="modal" data-bs-target="#logout-all-session-Modal">
+                                        Log Out on All Devices
+                                    </button>
+                                </div>
+                                <div id="security-table-data"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="mf-gift" role="tabpanel" aria-labelledby="mf-gift-tab">
+                    <div class="td-container-test">
+                        <div class="td-card bg-transparent">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div class="title-wrapper">
+                                    <h4 class="mb-0">My Gift Cards</h4>
+                                    <p class="fs-18">Gift cards you have purchased or received</p>
+                                </div>
+                                <button class="outline-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#giftFilter">
+                                    <img src="/images/icon-filter.svg" alt=""> Filter
+                                </button>
+                            </div>
+                            <div id="giftcard-table-data"></div>
+                            <div class="custom-pagination mt-3 mt-lg-4">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-end"></ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+                    <div class="td-container-test">
+                        <div class="td-card bg-transparent">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div class="title-wrapper">
+                                    <h4 class="mb-0">My Tickets</h4>
+                                    <p class="fs-18">Your latest celebrity raffle entries</p>
+                                </div>
+                            </div>
+                            <div class="table-container mb-5">
+                                <table>
+                                  <thead>
+                                    <tr>
+                                        <th>Celebrity</th>
+                                        <th>Free</th>
+                                        <th>Paid</th>
+                                        <th>Gift</th>
+                                        <th class="fixed-column">Total Entries </th>
+                                        <th class="fixed-column">Total Entries / Limit</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                    <% if(!body.tickets || body.tickets.length === 0) { %>
+                                    <tr>
+                                        <td colspan="8" class="text-center">No tickets found.</td>
+                                    </tr>
+                                    <% } else {%>
+                                    <% body?.tickets.forEach(ticket => { %>
+                                    <tr data-celebrity-id="<%= ticket._id %>">
+                                      <td><strong><%= ticket.celebrityName %></strong></td>
+                                      <td><%= ticket.freeEntries %></td>
+                                      <td><%= ticket.paidEntries %></td>
+                                      <td><%= ticket.giftEntries %></td>
+                                      <td class="fixed-column session"><%= ticket.totalEntries %></td>
+                                      <td class="fixed-column session"><%= ticket.celebrityPaidEntries +" / "+ body?.totalEntriesPurchaseLimit %></td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                  </tbody>
+                                </table>
+                              </div>
+                            <div class="section-wrapper">
+                                <div class="d-flex align-items-center justify-content-between mb-4">
+                                    <div class="title-wrapper">
+                                        <h4 class="mb-0">Detailed Breakdown</h4>
+                                    </div>
+                                    <button class="outline-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#myTicketFilter">
+                                        <img src="/images/icon-filter.svg" alt=""> Filter
+                                    </button>
+                                </div>
+                                <div id="my-tickets-breakdown-table-data"></div>
+                                <div class="custom-pagination mt-3 mt-lg-4">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-end"></ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>let celebrities = <%- JSON.stringify(body?.celebrities) %></script>
+<%-include('./footer.ejs')%>

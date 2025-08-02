@@ -1,0 +1,100 @@
+<div class="table-container">
+   <table>
+      <thead>
+         <tr>
+            <th>Celebrity</th>
+            <th>Type</th>
+            <th>Entries</th>
+            <th>Cost</th>
+            <th>Status</th>
+            <th>Details</th>
+            <th>Date</th>
+            <th class="fixed-column text-center">Actions</th>
+         </tr>
+      </thead>
+      <tbody>
+         <% if (body?.totalTickets && body?.tickets?.length > 0) { body.tickets.forEach((ticket, index) => { const start_index = (parseInt(body.param.currentPage) - 1) *
+         parseInt(body.param.itemPerPage) + index + 1; %>
+         <tr data-id="<%= ticket._id %>" data-code="<%= ticket?.giftCardCode %>" data-giftcard-id="<%= ticket?.giftcardId %>" data-giftcard-status="<%= ticket?.giftcardStatus %>">
+            <td><strong><%= ticket.celebrityName %></strong></td>
+            <td>
+               <% if (ticket.type === 1) { %>
+               <span class="type free">Free</span>
+               <% } else if (ticket.type === 2) { %>
+               <span class="type paid">Paid</span>
+               <% } else if (ticket.type === 3 && ticket?.giftcardId) { %>
+               <span class="type gift">Gift</span>
+               <% } else if (ticket.type === 3) { %>
+               <span class="type giftrec">Gift </span>
+               <% } %>
+            </td>
+            <td><%= ticket?.totalEntries || 0 %></td>
+            <td><%= ticket?.totalCost || "Free" %></td>
+            <td>
+               <% if (ticket.giftcardStatus === 1 || ticket.giftcardStatus === 0) { %>
+               <span class="badge success">Active</span>
+               <% } else if (ticket.giftcardStatus === 2) { %>
+               <span class="badge info">Redeemed</span>
+               <% } else if(ticket?.type === 1 || ticket?.type === 2) {%>
+                <span class="badge info">Redeemed</span>
+              <%}%>
+
+            </td>
+            <td>
+               <div class="details<%= ticket?.type === 2 || ticket?.type === 3 ? ' cost' : '' %>">
+                  <% if (ticket?.type === 1) { %>
+                    <div>Free claimed</div>
+                  
+                  <% } else if (ticket?.type === 2 && ticket?.description) {
+                    const lines = ticket.description.split('.').map(line => line.trim()).filter(line => line);
+                    lines.forEach(line => { %>
+                      <div><%= line %></div>
+                  <% }) %>
+                  
+                  <% } else if (ticket?.giftcardStatus === 2) { %>
+                    <% ticket.membershipDetails?.forEach(membership => { %>
+                      <div><%= `${ticket?.totalEntries || 0} X $${membership?.price || 0} USD ${membership?.name || ''} pack${ticket?.type === 3 ? ' gift card' : ''} received from ${ticket?.toEmail || ''}` %></div>
+                    <% }) %>
+                  
+                  <% } else { %>
+                    <% ticket.membershipDetails?.forEach(membership => { %>
+                      <div><%= `${ticket?.type === 2 ? (membership?.membershipEntries || 0) : (ticket?.totalEntries || 0)} X $${membership?.price || 0} USD ${membership?.name || ''} pack${ticket?.type === 3 ? ' gift card' : ''} purchased` %></div>
+                    <% }) %>
+                  <% } %>
+                </div>
+                
+                
+                
+            </td>
+            <td><%= ticket?.created_at ? new Date(ticket.created_at).toLocaleDateString('en-GB') : 'N/A' %></td>
+
+            <td class="fixed-column session text-center">
+               <% if(ticket?.giftCardCode && ticket.giftcardStatus !== 2) { %>
+               <div class="table-btn-wrapper d-flex align-items-center justify-content-center">
+                  <button class="table-btn copy-btn" data-text="<%= ticket?.giftCardUrl || '' %>">
+                     <img src="/images/icon-copy-lg.svg" alt="" />
+                     <span class="copied-text">Copied!</span>
+                  </button>
+                  <% if (ticket.giftcardUserId?.toString() === body?.user?._id?.toString()) { %>
+                  <button class="table-btn" data-bs-toggle="modal" data-bs-target="#shareModal" data-text="<%= ticket?.giftCardUrl %>">
+                     <img src="/images/icon-mail.svg" alt="" />
+                  </button>
+                  <% } else { %>
+                  <button class="table-btn redeem-btn">
+                     <img src="/images/icon-ticket-checked.svg" alt="" />
+                  </button>
+                  <% } %>
+               </div>
+               <% } else { %>
+               <span>-</span>
+               <% }%>
+            </td>
+         </tr>
+         <% }); } else { %>
+         <tr>
+            <td colspan="8" class="text-center">No tickets found.</td>
+         </tr>
+         <% } %>
+      </tbody>
+   </table>
+</div>

@@ -1,0 +1,83 @@
+<div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Celebrity</th>
+          <th>Entries</th>
+          <th>Cost</th>
+          <th>Gift Type</th>
+          <th>Status</th>
+          <th>Date/Time</th>
+          <th class="fixed-column text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (body?.totalGiftcard && body?.giftcards?.length > 0) {
+            body.giftcards.forEach((giftcard, index) => {
+              const start_index = (parseInt(body.param.currentPage) - 1) * parseInt(body.param.itemPerPage) + index + 1;
+        %>
+          <tr data-id="<%= giftcard._id %>" data-code="<%= giftcard?.giftCardCode %>" >
+            <td><strong><%= giftcard.celebrityName || "----" %></strong></td>
+            <td><%= giftcard.totalEntries || 0 %></td>
+            <td>$<%= giftcard.amount || 0 %></td>
+            <td>
+              <% if (giftcard.userId?.toString() === body.user._id?.toString()) { %>
+                <div class="g-from send">
+                  <span>
+                    <strong>Sent</strong><br>
+                    <span class="gs-mail">to: <%= giftcard.toEmail %></span>
+                  </span>
+                </div>
+              <% } else { %>
+                <div class="g-from recv">
+                  <span>
+                    <strong>Received</strong><br>
+                    <span class="gs-mail">From: <%= giftcard.fromEmail %></span>
+                  </span>
+                </div>
+              <% } %>
+            </td>
+            <td>
+              <% if (giftcard.status === 1 || giftcard.status === 0) { %>
+                <span class="badge success">Active</span>
+              <% } else { %>
+                <span class="badge info">Redeemed</span>
+              <% } %>
+            </td>
+            <td class="dt">
+              <%= new Date(giftcard.created_at).toLocaleDateString("en-GB") %><br>
+              <span><%= new Date(giftcard.created_at).toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit' }) %></span>
+            </td>
+            <td class="fixed-column session text-center">
+              <div class="table-btn-wrapper d-flex align-items-center justify-content-center">
+                <% if (giftcard.status !== 2) { %>
+                  <button class="table-btn copy-btn" data-text="<%= giftcard?.giftCardUrl %>">
+                    <img src="/images/icon-copy-lg.svg" alt="">
+                    <span class="copied-text">Copied!</span>
+                  </button>
+  
+                  <% if (giftcard.userId?.toString() === body?.user?._id?.toString()) { %>
+                    <button class="table-btn" data-bs-toggle="modal" data-bs-target="#shareModal" data-text="<%= giftcard?.giftCardUrl %>">
+                      <img src="/images/icon-mail.svg" alt="">
+                    </button>
+                  <% } else { %>
+                    <button class="table-btn redeem-btn">
+                      <img src="/images/icon-ticket-checked.svg" alt="">
+                    </button>
+                  <% } %>
+                <% } else { %>
+                  <span> - </span>
+                  <% }%>
+              </div>
+            </td>
+          </tr>
+        <% });
+          } else { %>
+          <tr>
+            <td colspan="7" class="text-center">No gift card history found.</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+  

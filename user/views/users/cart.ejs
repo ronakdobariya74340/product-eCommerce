@@ -1,0 +1,193 @@
+<%- include('./header.ejs') %>
+<section class="cart-section">
+    <div class="container">
+        <div class="page-heading">
+            <h1>My Cart</h1>
+            <div class="empty-action d-flex align-items-center gap-3 mb-4 mb-sm-0 <%= body.cartDetails.length === 0 ? 'd-none' : '' %>">
+                <div class="form-check">
+                    <input class="form-check-input purchase_all_gift" type="checkbox" id="received" <%= body.allMembershipGift ? "checked" : "" %> />
+                    <label class="form-check-label" for="received">Purchase all as a gift</label>
+                </div>
+                <button class="outline-btn" id="all_empty_cart">
+                    <span class="d-none d-md-inline">
+                        Empty Cart
+                    </span>
+                    <img src="/images/icon-trash.svg" alt="" />
+                </button>
+            </div>
+        </div>
+        <% if (body.cartDetails.length === 0) { %>
+            <div class="empty-cart-container">
+                <div class="empty-cart-wrapper">
+                    <div class="cart-img">
+                        <img src="/images/cart-lg.svg" alt="" />
+                    </div>
+                    <h4 class="text-center mt-3">Your Cart is Currently Empty!</h4>
+                    <p class="text-center">Add something to win big price. </p>
+                </div>
+                <div class="d-flex align-items-center justify-content-center mt-3 mt-lg-4">
+                    <button class="app-btn" id="back_to_celebrities">
+                        Back to Celebrities
+                    </button>
+                </div>
+            </div>
+        <% } else { %>
+            <div class="cart-details-wrapper mt-3" >
+                <div class="row gy-4">
+                    <div class="col-xl-8">
+                        <% if(body?.cartDetails !== undefined && body?.cartDetails.length > 0) { body?.cartDetails.forEach((cart, index)=> { %>
+                            <input type="hidden" id="cart_celebrity_id_<%= index %>" value="<%= cart?.celebrity?._id %>" />
+                            <div class="cart-details">
+                                <div class="celec-cart-item">
+                                    <div class="celeb-cart-name">
+                                        <div class="cc-img">
+                                            <% if(cart?.celebrity?.image.length > 0){ %>
+                                                <img src="<%= process.env.ADMIN_URL %>/images/CelebrityImages/<%= cart?.celebrity?.image[0] %>" alt="Celebrity Images" />
+                                            <% } else { %>
+                                                <img src="/images/celeb/reveal.png" alt="" />
+                                            <% } %>
+                                        </div>
+                                        <div class="cc-name">
+                                            <%= cart?.celebrity?.name ? cart?.celebrity?.name : "-" %> <span>(<%= cart?.membershipList.length %> Items)</span>
+                                        </div>
+                                    </div>
+                                    <button class="gift-btn all_gift_send_btn d-none" id="all_gift_send_btn_<%= index %>" data-index="<%= index %>" data-total-membership="<%= cart?.membershipList.length %>">
+                                        Gift All
+                                        <img src="/images/icon-gift.svg" alt="" />
+                                    </button>
+                                    <button class="del-btn remove_celebrity_btn" data-index="<%= index %>"></button>
+                                </div>
+                                <% if(cart?.membershipList !== undefined && cart?.membershipList.length > 0) { cart?.membershipList.forEach((membership, number)=> { %>
+                                    <input type="hidden" id="cart_membership_id_<%= index %>_<%= number %>" value="<%= membership?._id %>" />
+                                    <div class="ticket-items">
+                                        <div class="cart-ticket-details">
+                                            <div class="packeg-details">
+                                                <div class="packeg-name">
+                                                    <h4>
+                                                          <%= membership?.name ? membership?.name : "" %> 
+                                                    </h4>
+                                                </div>
+                                                <div class="p-price">
+                                                    <p id="total_price_pack_<%= index %>_<%= number %>">
+                                                        $<%= membership?.totalPriceByQuantity ? membership?.totalPriceByQuantity : 0 %>
+                                                    </p>
+                                                    <span class="membership_entries" id="total_entries_pack_<%= index %>_<%= number %>">
+                                                        <%= membership?.totalEntries ? membership?.totalEntries : 0 %> Entries
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="ticket-action">
+                                                <div class="qty-change d-flex align-items-center gap-1">
+                                                    <button class="minus minus_qty_btn <%= membership?.totalQuantity > 1 ? '' : 'btn-disabled' %>" id="minus_qty_pack_btn_<%= index %>_<%= number %>" data-index="<%= index %>" data-member-index="<%= index %>_<%= number %>" data-current-price="<%= membership?.price %>" data-current-entries="<%= membership?.membershipEntries %>"></button>
+                                                    <input type="number" name="total_qty_pack_<%= index %>_<%= number %>" class="qty_input_btn btn-disabled" id="total_qty_pack_<%= index %>_<%= number %>" value="<%= membership?.totalQuantity ? membership?.totalQuantity : 0 %>" />
+                                                    <button class="plus plus_qty_btn" id="plus_qty_pack_btn_<%= index %>_<%= number %>" data-index="<%= index %>" data-member-index="<%= index %>_<%= number %>" data-current-price="<%= membership?.price %>" data-current-entries="<%= membership?.membershipEntries %>"></button>
+                                                </div>
+                                                <button class="gift-btn add_gift_membership_btn <%= String(membership?.isSendGift) === 'true' ? 'd-none' : '' %>" id="add_gift_membership_btn_<%= index %>_<%= number %>" data-index="<%= index %>" data-member-index="<%= index %>_<%= number %>" data-is-gift="<%= String(membership?.isSendGift) === 'true' %>">
+                                                    Gift This
+                                                    <img src="/images/icon-gift.svg" alt="" />
+                                                </button>
+                                            </div>
+                                            <button class="del-btn remove_membership_btn" id="membership_remove_btn_<%= index %>_<%= number %>" data-index="<%= index %>" data-member-index="<%= index %>_<%= number %>" data-current-price="<%= membership?.price %>" data-membership-gift="<%= String(membership?.isSendGift) %>"></button>
+                                        </div>
+                                        <div class="gift-message gift_membership_message_view <%= String(membership?.isSendGift) === 'true' ? '' : 'd-none' %>" id="gift_membership_message_line_<%= index %>_<%= number %>" data-index="<%= index %>" data-member-index="<%= index %>_<%= number %>">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <img src="/images/icon-gift.svg" alt="" />
+                                                <p>You will be purchasing this <strong>  <%= membership?.name ? membership?.name : "" %> pack </strong> for <strong><%= cart?.celebrity?.name ? cart?.celebrity?.name : "-" %></strong> as a gift.</p>
+                                            </div>
+                                            <button class="close-btn remove_gift_membership_message_btn" data-index="<%= index %>" data-member-index="<%= index %>_<%= number %>"></button>
+                                        </div>
+                                    </div>
+                                <% }) } %>
+                                <div class="gift-message all_gift_message_apply_view d-none" id="all_gift_message_view_<%= index %>">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <img src="/images/icon-gift.svg" alt="" />
+                                        <p>You will be purchasing all the paid packs for <strong> <%= cart?.celebrity?.name ? cart?.celebrity?.name : "-" %></strong> as a gift.</p>
+                                    </div>
+                                    <button class="close-btn remove_gift_celebrity_message_btn" data-index="<%= index %>" data-total-membership="<%= cart?.membershipList.length %>"></button>
+                                </div>
+                            </div>
+                        <% }) } %>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="total-sidebar">
+                            <div class="total-sun-wrapper">
+                                <div class="free-note">
+                                    <p>No purchase necessary to enter the sweepstakes.</p>
+                                </div>
+                                <div class="total-sum">
+                                    <input type="hidden" id="total_qty_hide_count" value="<%= body?.totalQtyCount ? body?.totalQtyCount : 0 %>" />
+                                    <input type="hidden" id="total_gift_hide_count" value="<%= body?.totalGiftCount ? body?.totalGiftCount : 0 %>" />
+                                    <input type="hidden" id="total_sub_amount_hide_count" value="<%= body?.totalSubAmount ? body?.totalSubAmount : 0 %>" />
+                                    <input type="hidden" id="total_amount_hide_count" value="<%= body?.totalAmount ? body?.totalAmount : 0 %>" />
+                                    <ul class="total-breakup">
+                                        <li>
+                                            <span class="item-name">Celebrities</span>
+                                            <span class="qty"><%= body?.totalCelebrities ? body?.totalCelebrities : 0 %></span>
+                                        </li>
+                                        <li>
+                                            <span class="item-name">Qty</span>
+                                            <span class="qty" id="total_qty_count"><%= body?.totalQtyCount ? body?.totalQtyCount : 0 %></span>
+                                        </li>
+                                        <li>
+                                            <span class="item-name">Gifts</span>
+                                            <span class="qty" id="total_gift_count"><%= body?.totalGiftCount ? body?.totalGiftCount : 0 %></span>
+                                        </li>
+                                        <li>
+                                            <span class="item-name">Sub total</span>
+                                            <span class="qty" id="total_sub_amount_count">$<%= body?.totalSubAmount ? body?.totalSubAmount : 0 %> USD</span>
+                                        </li>
+                                        <li class="total-sum-item mb-0">
+                                            <span class="fw-semibold">Total</span>
+                                            <span class="fw-bold" id="total_final_amount_count">$<%= body?.totalAmount ? body?.totalAmount : 0 %> USD</span>
+                                        </li>
+                                    </ul>
+                                    <div class="pay-method">
+                                        <p class="fw-bold">Payment Method</p>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <label class="radio-container">
+                                                <input type="radio" value="1" name="select_payment_method" checked />
+                                                <span class="checkmark"></span>
+                                                <img src="/images/strip.png" alt="" />
+                                            </label>
+                                            <label class="radio-container">
+                                                <input type="radio" value="2" name="select_payment_method" />
+                                                <span class="checkmark"></span>
+                                                <img src="/images/paypal.png" alt="" />
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <% if(body.packLimitDetails && body.packLimitDetails.length > 0) { %>
+                                        <ul class="ticket-warning">
+                                            <% body.packLimitDetails.forEach((item) => { %>
+                                                <% if(item?.isEntryOverLimit){ %>
+                                                    <li class="ticket-warning-item">
+                                                        <strong><%= item?.celebrityName || "-" %>:</strong> <span>Would exceed paid entry limit (<%= item?.allowedEntryLimit || 0 %>)</span>
+                                                    </li>
+                                                <% } else if(item?.isPackOverLimit){ %>
+                                                    <li class="ticket-warning-item">
+                                                        <strong><%= item?.celebrityName || "-" %>:</strong> <span>Would exceed purchase entry limit (<%= item?.allowedPackLimit || 0 %>)</span>
+                                                    </li>
+                                                <% }; %>
+                                            <% }); %>
+                                        </ul>
+                                    <% }; %>
+                                    <div class="app-btn-wrapper <%= body.limitPackExceeded ? 'btn-disabled' : '' %>">
+                                        <a href="javascript:;" class="app-btn w-100" id="review_checkout_btn">
+                                            <img src="/images/icon-lock.svg" alt="" />
+                                            Secure Checkout
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="total-sun-wrapper gift-note">
+                                <h3>Gift Purchase</h3>
+                                <p>A unique gift link will be generated after payment.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</section>
+<%-include('./footer.ejs')%>

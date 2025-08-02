@@ -1,0 +1,96 @@
+<input type="hidden" id="selected_payment_method" value="<%= body?.payment_method ? body?.payment_method : 0 %>" />
+<div class="row gy-4">
+    <div class="col-lg-8">
+        <% if(body?.cartDetails !== undefined && body?.cartDetails.length > 0) { body?.cartDetails.forEach((cart, index)=> { %>
+            <div class="cart-details">
+                <div class="order-wrapper">
+                    <div class="celec-cart-item">
+                        <div class="celeb-cart-name">
+                            <div class="cc-img">
+                                <% if(cart?.celebrity?.image.length > 0){ %>
+                                    <img src="<%= process.env.ADMIN_URL %>/images/CelebrityImages/<%= cart?.celebrity?.image[0] %>" alt="Celebrity Images" />
+                                <% } else { %>
+                                    <img src="/images/celeb/img-2.png" alt="" />
+                                <% } %>
+                            </div>
+                            <div class="cc-name">
+                                <%= cart?.celebrity?.name ? cart?.celebrity?.name : "-" %> <span>(<%= cart?.membershipList.length %> Items)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="total-breakup mt-3">
+                        <% if(cart?.membershipList !== undefined && cart?.membershipList.length > 0) { cart?.membershipList.forEach((membership, number)=> { %>
+                            <%
+                                let packageName = "";
+                                if(membership?.membershipType === 3){ 
+                                    packageName = "Premium";
+                                } else if(membership?.membershipType === 2) {
+                                    packageName = "Popular";
+                                } else {
+                                    packageName = "Starter";
+                                };
+                            %>
+                            <li>
+                                <span class="item-name"><%= packageName %> Pack X <%= membership?.totalQuantity ? membership?.totalQuantity : 0 %></span>
+                                <span class="qty">$<%= membership?.totalPriceByQuantity ? membership?.totalPriceByQuantity : 0 %></span>
+                            </li>
+                        <% }) } %>
+                    </ul>
+                </div>
+            </div>
+        <% }) } %>
+    </div>
+    <div class="col-lg-4">
+        <div class="total-sun-wrapper">
+            <div class="free-note">
+                <p>No purchase necessary to enter the sweepstakes.</p>
+            </div>
+            <div class="total-sum">
+                <ul class="total-breakup">
+                    <li>
+                        <span class="item-name">Celebrities</span>
+                        <span class="qty"><%= body?.totalCelebrities ? body?.totalCelebrities : 0 %></span>
+                    </li>
+                    <li>
+                        <span class="item-name">Qty</span>
+                        <span class="qty"><%= body?.totalQtyCount ? body?.totalQtyCount : 0 %></span>
+                    </li>
+                    <li>
+                        <span class="item-name">Gifts</span>
+                        <span class="qty"><%= body?.totalGiftCount ? body?.totalGiftCount : 0 %></span>
+                    </li>
+                    <li>
+                        <span class="item-name">Sub total</span>
+                        <span class="qty">$<%= body?.totalSubAmount ? body?.totalSubAmount : 0 %> USD</span>
+                    </li>
+                    <li class="total-sum-item mb-0">
+                        <span class="fw-semibold">Total</span>
+                        <span class="fw-bold" id="final_amount_val" data-final-payout="<%= body?.totalAmount ? body?.totalAmount : 0 %>">
+                            $<%= body?.totalAmount ? body?.totalAmount : 0 %> USD
+                        </span>
+                    </li>
+                </ul>
+                <div class="selected-method">
+                    <p class="fw-bold">Payment Method</p>
+                    <div class="selected-getway">
+                        <% if(body?.payment_method === 1){ %>
+                            <img src="/images/strip.png" alt="" />
+                        <% } else { %>
+                            <img src="/images/paypal.png" alt="" />
+                        <% } %>
+                    </div>
+                </div>
+                <div class="app-btn-wrapper">
+                    <a href="javascript:;" class="app-btn w-100" id="final_checkout_btn">
+                        <img src="/images/icon-lock.svg" alt="" />
+                        Pay with <%= body?.payment_method === 1 ? "Stripe" : "PayPal" %>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="total-sun-wrapper gift-note">
+            <h3>Gift Purchase</h3>
+            <p>A unique gift link will be generated after payment.</p>
+        </div>
+    </div>
+</div>

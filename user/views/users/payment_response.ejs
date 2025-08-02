@@ -1,0 +1,211 @@
+<%- include('./header.ejs') %>
+<%
+    function formatDate(date) {
+        let d = new Date(date);
+        let day = ('0' + d.getDate()).slice(-2);
+        let month = ('0' + (d.getMonth() + 1)).slice(-2);
+        let year = d.getFullYear();
+
+        let hours = d.getHours();
+        let minutes = ('0' + d.getMinutes()).slice(-2);
+
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 0 => 12
+        let strHour = ('0' + hours).slice(-2);
+
+        return `${day}/${month}/${year} ${strHour}:${minutes} ${ampm}`;
+    };
+%>
+<div class="app-content">
+    <div class="app-wrapper mx-auto">
+        <div class="app-content-wrapper">
+            <input type="hidden" id="user_payment_status" name="user_payment_status" value="<%= body?.statusCode %>" />
+            <!-- payment Pending Step -->
+            <div id="payment_pending_section">
+                <div class="comp-wrapper mx-auto">
+                    <div class="comp-icon mx-auto">
+                        <img src="/images/icon-pending.svg" alt="" />
+                    </div>
+                    <p class="title">Your payment in progress!</p>
+                    <p class="sub-text mx-auto mt-3">Please Wait for few time.</p>
+                    <div class="sub-button d-flex gap-3 mt-30">
+                        <a href="/" class="primary-btn btn-sm w-100"> Back to home </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- payment Fail Step -->
+            <div class="d-none" id="payment_fail_section">
+                <section class="payment-confirmation">
+                    <div class="container">
+                        <div class="payment-status">
+                            <div class="success-illustration">
+                                <img src="assets/images/star-outline.png" alt="" class="illus red" />
+                                <img src="assets/images/star-fill.png" alt="" class="illus red" />
+                                <img src="assets/images/white-cross.svg" alt="" class="checked" />
+                            </div>
+                            <div class="pmt-sts">
+                                <h4>Payment Failed</h4>
+                            </div>
+                        </div>
+                        <div class="trans-details">
+                            <div class="row gy-4 justify-content-center">
+                                <div class="col-lg-6 mt-0">
+                                    <div class="td-card">
+                                        <h4>Transaction Details</h4>
+                                        <ul class="total-breakup">
+                                            <li class="mb-2">
+                                                <span class="item-name">Status:</span>
+                                                <span class="badge error">Failed</span>
+                                            </li>
+                                            <li class="mb-2">
+                                                <span class="item-name">Transaction ID :</span>
+                                                <div class="qty d-flex align-items-center">
+                                                    <span class="t-id"><%= body?.ticketId %></span>
+                                                    <button class="copy-btn" data-text="<%= body?.ticketId %>">
+                                                        <span class="copy-icon">
+                                                            <img src="/images/icon-copy-sm.svg" alt="" />
+                                                        </span>
+                                                        <span class="copied-text">Copied!</span>
+                                                    </button>
+                                                </div>
+                                            </li>
+                                            <li class="mb-2">
+                                                <span class="item-name">Date time :</span>
+                                                <span class="qty">
+                                                    <%= formatDate(body?.tempPaymentDetails?.payment_date) %>
+                                                </span>
+                                            </li>
+                                            <li class="mb-2">
+                                                <span class="item-name">Total Amount</span>
+                                                <span class="qty">
+                                                    $<%= body?.tempPaymentDetails?.totalAmount ? body?.tempPaymentDetails?.totalAmount : 0 %> USD
+                                                </span>
+                                            </li>
+                                            <li class="mb-2">
+                                                <span class="item-name">Total Entries</span>
+                                                <span class="qty">
+                                                    <%= body?.tempPaymentDetails?.totalEntries ? body?.tempPaymentDetails?.totalEntries : 0 %>
+                                                </span>
+                                            </li>
+                                            <li class="mb-2">
+                                                <span class="item-name">Reason</span>
+                                                <span class="qty error">Payment Cancel</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="action-btn d-flex align-items-center justify-content-center gap-2 gap-sm-3 gap-lg-4">
+                            <a href="/celebrities" class="app-btn">Back to Celebrities</a>
+                            <button class="app-btn outline-btn" id="re_try_payment" data-payment-link="<%= body?.tempPaymentDetails?.payment_link %>">
+                                Retry
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Final Success Step -->
+            <div class="d-none" id="final_success_section">
+                <section class="payment-confirmation">
+                    <div class="container">
+                        <div class="payment-status">
+                            <div class="success-illustration">
+                                <img src="assets/images/star-outline.png" alt="" class="illus" />
+                                <img src="assets/images/star-fill.png" alt="" class="illus" />
+                                <img src="assets/images/icon-checked.svg" alt="" class="checked" />
+                            </div>
+                            <div class="pmt-sts">
+                                <h4>Payment Successful</h4>
+                                <p>Thanks for participating!</p>
+                            </div>
+                        </div>
+                        <div class="trans-details">
+                            <div class="row gy-4 justify-content-center">
+                                <div class="col-lg-6">
+                                    <div class="td-card">
+                                        <h4>Transaction Details</h4>
+                                        <ul class="total-breakup">
+                                            <li class="mb-2">
+                                                <span class="item-name">Status:</span>
+                                                <span class="badge success">Success</span>
+                                            </li>
+                                            <li class="mb-2">
+                                                <span class="item-name">Transaction ID :</span>
+                                                <div class="qty d-flex align-items-center"> <span class="t-id"><%= body?.ticketId %></span>
+                                                    <button class="copy-btn" data-text="<%= body?.ticketId %>">
+                                                        <span class="copy-icon">
+                                                            <img src="assets/images/icon-copy-sm.svg" alt="" />
+                                                        </span>
+                                                        <span class="copied-text">Copied!</span>
+                                                    </button>
+                                                </div>
+                                            </li>
+                                            <li class="mb-2">
+                                                <span class="item-name">Date time :</span>
+                                                <span class="qty">
+                                                    <%= formatDate(body?.tempPaymentDetails?.payment_date) %>
+                                                </span>
+                                            </li>
+                                            <li class="mb-2">
+                                                <span class="item-name">Total Amount</span>
+                                                <span class="qty">
+                                                    $<%= body?.tempPaymentDetails?.totalAmount ? body?.tempPaymentDetails?.totalAmount : 0 %> USD
+                                                </span>
+                                            </li>
+                                            <li class="mb-2">
+                                                <span class="item-name">Total Entries</span>
+                                                <span class="qty">
+                                                    <%= body?.tempPaymentDetails?.totalEntries ? body?.tempPaymentDetails?.totalEntries : 0 %>
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <% if(body?.giftcardData && body?.giftcardData.length > 0){ %>
+                                    <div class="col-lg-6">
+                                        <div class="td-card fill">
+                                            <h4>Gift Card Details</h4>
+                                            <% body?.giftcardData.forEach((giftcard, index)=> { %>
+                                                <div class="gift-link">
+                                                    <p>
+                                                        <%= giftcard.celebrityId.name %>
+                                                        -
+                                                        <%= giftcard.membershipId.membershipType === 3 ? "VIP" : giftcard.membershipId.membershipType === 2 ? "FAN" : "Follower" %>
+                                                    </p>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <button class="copy-outline copy-btn copy_gift_link" data-text="<%= giftcard.giftCardUrl %>">
+                                                            Gift Link
+                                                            <span class="copy-icon">
+                                                                <img src="assets/images/icon-copy-sm.svg" alt="" />
+                                                            </span>
+                                                            <span class="copied-text">Copied!</span>
+                                                        </button>
+                                                        <button class="copy-outline share_gift_card" data-gift-link="<%= giftcard.giftCardUrl %>" data-gift-id="<%= giftcard._id %>">
+                                                            Share
+                                                            <span class="copy-icon">
+                                                                <img src="assets/images/icon-share.svg" alt="" />
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            <% }); %>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="action-btn d-flex align-items-center justify-content-center gap-2 gap-sm-3 gap-lg-4">
+                            <a href="/celebrities" class="app-btn">Back to Celebrities</a>
+                            <button class="app-btn outline-btn" id="go_to_my_entries" >My Entries</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+<%-include('./footer.ejs')%>
