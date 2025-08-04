@@ -30,6 +30,7 @@
         <link rel="stylesheet" href="/css/plugins/jquery.countdown.css">
 
         <!-- Main CSS File -->
+        <link rel="stylesheet" href="/css/popup.css">
         <link rel="stylesheet" href="/css/style.css">
         <link rel="stylesheet" href="/css/skins/skin-demo-5.css">
         <link rel="stylesheet" href="/css/demos/demo-5.css">
@@ -52,375 +53,21 @@
 
                             <nav class="main-nav">
                                 <ul class="menu sf-arrows">
-                                    <li class="megamenu-container active">
+                                    <li class="megamenu-container <%= header.id === "home" ? 'active' : '' %>">
                                         <a href="/" class="sf-with-ul">Home</a>
-
-                                        <div class="megamenu demo">
-                                            <div class="menu-col">
-                                                <div class="menu-title">Choose your demo</div>
-
-                                                <div class="demo-list">
-                                                    <div class="demo-item">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/1.jpg);"></span>
-                                                            <span class="demo-title">01 - furniture store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/2.jpg);"></span>
-                                                            <span class="demo-title">02 - furniture store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/3.jpg);"></span>
-                                                            <span class="demo-title">03 - electronic store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/4.jpg);"></span>
-                                                            <span class="demo-title">04 - electronic store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/5.jpg);"></span>
-                                                            <span class="demo-title">05 - fashion store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/6.jpg);"></span>
-                                                            <span class="demo-title">06 - fashion store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/7.jpg);"></span>
-                                                            <span class="demo-title">07 - fashion store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/8.jpg);"></span>
-                                                            <span class="demo-title">08 - fashion store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/9.jpg);"></span>
-                                                            <span class="demo-title">09 - fashion store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/10.jpg);"></span>
-                                                            <span class="demo-title">10 - shoes store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/11.jpg);"></span>
-                                                            <span class="demo-title">11 - furniture simple store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/12.jpg);"></span>
-                                                            <span class="demo-title">12 - fashion simple store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/13.jpg);"></span>
-                                                            <span class="demo-title">13 - market</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/14.jpg);"></span>
-                                                            <span class="demo-title">14 - market fullwidth</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/15.jpg);"></span>
-                                                            <span class="demo-title">15 - lookbook 1</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/16.jpg);"></span>
-                                                            <span class="demo-title">16 - lookbook 2</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/17.jpg);"></span>
-                                                            <span class="demo-title">17 - fashion store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/18.jpg);"></span>
-                                                            <span class="demo-title">18 - fashion store (with sidebar)</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/19.jpg);"></span>
-                                                            <span class="demo-title">19 - games store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/20.jpg);"></span>
-                                                            <span class="demo-title">20 - book store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/21.jpg);"></span>
-                                                            <span class="demo-title">21 - sport store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/22.jpg);"></span>
-                                                            <span class="demo-title">22 - tools store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/23.jpg);"></span>
-                                                            <span class="demo-title">23 - fashion left navigation store</span>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="demo-item hidden">
-                                                        <a href="/">
-                                                            <span class="demo-bg" style="background-image: url(/images/menu/demos/24.jpg);"></span>
-                                                            <span class="demo-title">24 - extreme sport store</span>
-                                                        </a>
-                                                    </div>
-
-                                                </div>
-
-                                                <div class="megamenu-action text-center">
-                                                    <a href="javascript:;" class="btn btn-outline-primary-2 view-all-demos"><span>View All Demos</span><i class="icon-long-arrow-right"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </li>
-                                    <li>
+                                    <li class="<%= header.id === "shop" ? 'active' : '' %>">
                                         <a href="javascript:;" class="sf-with-ul">Shop</a>
-
-                                        <div class="megamenu megamenu-md">
-                                            <div class="row no-gutters">
-                                                <div class="col-md-8">
-                                                    <div class="menu-col">
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <div class="menu-title">Shop with sidebar</div>
-                                                                <ul>
-                                                                    <li><a href="javascript:;">Shop List</a></li>
-                                                                    <li><a href="javascript:;">Shop Grid 2 Columns</a></li>
-                                                                    <li><a href="javascript:;">Shop Grid 3 Columns</a></li>
-                                                                    <li><a href="javascript:;">Shop Grid 4 Columns</a></li>
-                                                                    <li><a href="javascript:;"><span>Shop Market<span class="tip tip-new">New</span></span></a></li>
-                                                                </ul>
-
-                                                                <div class="menu-title">Shop no sidebar</div>
-                                                                <ul>
-                                                                    <li><a href="javascript:;"><span>Shop Boxed No Sidebar<span class="tip tip-hot">Hot</span></span></a></li>
-                                                                    <li><a href="javascript:;">Shop Fullwidth No Sidebar</a></li>
-                                                                </ul>
-                                                            </div>
-
-                                                            <div class="col-md-6">
-                                                                <div class="menu-title">Product Category</div>
-                                                                <ul>
-                                                                    <li><a href="javascript:;">Product Category Boxed</a></li>
-                                                                    <li><a href="javascript:;"><span>Product Category Fullwidth<span class="tip tip-new">New</span></span></a></li>
-                                                                </ul>
-                                                                <div class="menu-title">Shop Pages</div>
-                                                                <ul>
-                                                                    <li><a href="javascript:;">Cart</a></li>
-                                                                    <li><a href="javascript:;">Checkout</a></li>
-                                                                    <li><a href="javascript:;">Wishlist</a></li>
-                                                                    <li><a href="javascript:;">My Account</a></li>
-                                                                    <li><a href="javascript:;">Lookbook</a></li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="banner banner-overlay">
-                                                        <a href="javascript:;" class="banner banner-menu">
-                                                            <img src="/images/menu/banner-1.jpg" alt="Banner">
-
-                                                            <div class="banner-content banner-content-top">
-                                                                <div class="banner-title text-white">Last <br>Chance<br><span><strong>Sale</strong></span></div><!-- End .banner-title -->
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </li>
-                                    <li>
+                                    <li class="<%= header.id === "product" ? 'active' : '' %>">
                                         <a href="javascript:;" class="sf-with-ul">Product</a>
-
-                                        <div class="megamenu megamenu-sm">
-                                            <div class="row no-gutters">
-                                                <div class="col-md-6">
-                                                    <div class="menu-col">
-                                                        <div class="menu-title">Product Details</div>
-                                                        <ul>
-                                                            <li><a href="javascript:;">Default</a></li>
-                                                            <li><a href="javascript:;">Centered</a></li>
-                                                            <li><a href="javascript:;"><span>Extended Info<span class="tip tip-new">New</span></span></a></li>
-                                                            <li><a href="javascript:;">Gallery</a></li>
-                                                            <li><a href="javascript:;">Sticky Info</a></li>
-                                                            <li><a href="javascript:;">Boxed With Sidebar</a></li>
-                                                            <li><a href="javascript:;">Full Width</a></li>
-                                                            <li><a href="javascript:;">Masonry Sticky Info</a></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <div class="banner banner-overlay">
-                                                        <a href="javascript:;">
-                                                            <img src="/images/menu/banner-2.jpg" alt="Banner">
-
-                                                            <div class="banner-content banner-content-bottom">
-                                                                <div class="banner-title text-white">New Trends<br><span><strong>spring 2019</strong></span></div><!-- End .banner-title -->
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:;" class="sf-with-ul">Pages</a>
-
-                                        <ul>
-                                            <li>
-                                                <a href="javascript:;" class="sf-with-ul">About</a>
-
-                                                <ul>
-                                                    <li><a href="javascript:;">About 01</a></li>
-                                                    <li><a href="javascript:;">About 02</a></li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href="javascript:;" class="sf-with-ul">Contact</a>
-
-                                                <ul>
-                                                    <li><a href="javascript:;">Contact 01</a></li>
-                                                    <li><a href="javascript:;">Contact 02</a></li>
-                                                </ul>
-                                            </li>
-                                            <li><a href="javascript:;">Login</a></li>
-                                            <li><a href="javascript:;">FAQs</a></li>
-                                            <li><a href="javascript:;">Coming Soon</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:;" class="sf-with-ul">Blog</a>
-
-                                        <ul>
-                                            <li><a href="javascript:;">Classic</a></li>
-                                            <li><a href="javascript:;">Listing</a></li>
-                                            <li>
-                                                <a href="javascript:;">Grid</a>
-                                                <ul>
-                                                    <li><a href="javascript:;">Grid 2 columns</a></li>
-                                                    <li><a href="javascript:;">Grid 3 columns</a></li>
-                                                    <li><a href="javascript:;">Grid 4 columns</a></li>
-                                                    <li><a href="javascript:;">Grid sidebar</a></li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href="javascript:;">Masonry</a>
-                                                <ul>
-                                                    <li><a href="javascript:;">Masonry 2 columns</a></li>
-                                                    <li><a href="javascript:;">Masonry 3 columns</a></li>
-                                                    <li><a href="javascript:;">Masonry 4 columns</a></li>
-                                                    <li><a href="javascript:;">Masonry sidebar</a></li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href="javascript:;">Mask</a>
-                                                <ul>
-                                                    <li><a href="javascript:;">Blog mask grid</a></li>
-                                                    <li><a href="javascript:;">Blog mask masonry</a></li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href="javascript:;">Single Post</a>
-                                                <ul>
-                                                    <li><a href="javascript:;">Default with sidebar</a></li>
-                                                    <li><a href="javascript:;">Fullwidth no sidebar</a></li>
-                                                    <li><a href="javascript:;">Fullwidth with sidebar</a></li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:;" class="sf-with-ul">Elements</a>
-
-                                        <ul>
-                                            <li><a href="javascript:;">Products</a></li>
-                                            <li><a href="javascript:;">Typography</a></li>
-                                            <li><a href="javascript:;">Titles</a></li>
-                                            <li><a href="javascript:;">Banners</a></li>
-                                            <li><a href="javascript:;">Product Category</a></li>
-                                            <li><a href="javascript:;">Video Banners</a></li>
-                                            <li><a href="javascript:;">Buttons</a></li>
-                                            <li><a href="javascript:;">Accordions</a></li>
-                                            <li><a href="javascript:;">Tabs</a></li>
-                                            <li><a href="javascript:;">Testimonials</a></li>
-                                            <li><a href="javascript:;">Blog Posts</a></li>
-                                            <li><a href="javascript:;">Portfolio</a></li>
-                                            <li><a href="javascript:;">Call to Action</a></li>
-                                            <li><a href="javascript:;">Icon Boxes</a></li>
-                                        </ul>
                                     </li>
                                 </ul>
                             </nav>
                         </div>
 
                         <div class="header-right">
-                            <div class="header-search header-search-extended header-search-visible">
+                            <!-- <div class="header-search header-search-extended header-search-visible">
                                 <a href="javascript:;" class="search-toggle" role="button"><i class="icon-search"></i></a>
                                 <form action="#" method="get">
                                     <div class="header-search-wrapper">
@@ -429,11 +76,38 @@
                                         <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
                                     </div>
                                 </form>
-                            </div>
+                            </div> -->
+
+                            <% if(!header.user){ %>
+                            <button class="login-btn" data-bs-toggle="modal" data-bs-target="#signinModal">
+                                Login
+                            </button>
+                            <% } else { %>
+                                <div class="after-login-btn d-flex align-items-center gap-2 gap-sm-3">
+                                    <div class="dropdown">
+                                        <button class="profile-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <img src="/images/avatar.png" alt="" />
+                                            <p><%= header.user.userName %></p>
+                                        </button>
+                                        <ul class="dropdown-menu profile-menu  dropdown-menu-sm-end">
+                                            <li class="mb-0 mb-sm-2">
+                                                <a class="dropdown-item d-flex" href="javascript:;">
+                                                    <img src="/images/user.svg" alt="" /> My Profile
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item log-out d-flex" data-bs-toggle="modal" data-bs-target="#logout-modal">
+                                                    <img src="/images/logout.svg" alt="" /> Logout
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            <% } %>
                             
-                            <a href="javascript:;" class="wishlist-link">
-                                <i class="icon-heart-o"></i>
-                            </a>
+                            <!-- <a href="javascript:;" class="login-btn">
+                                Login
+                            </a> -->
 
                             <div class="dropdown cart-dropdown">
                                 <a href="javascript:;" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
@@ -491,8 +165,8 @@
                                     </div>
 
                                     <div class="dropdown-cart-action">
-                                        <a href="javascript:;" class="btn btn-primary">View Cart</a>
-                                        <a href="javascript:;" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
+                                        <a href="/cart" class="btn btn-primary">View Cart</a>
+                                        <!-- <a href="javascript:;" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a> -->
                                     </div>
                                 </div>
                             </div>

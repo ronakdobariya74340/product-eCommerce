@@ -17,7 +17,7 @@ import {
     getPaymentSuccessResponse,
     getPaymentCancelResponse,
     postChangePassword,
-    getReviewOrderPage,
+    getCheckout,
     postCartUpdate,
     getmaintenanceMode,
     getTotalCartItem,
@@ -36,7 +36,7 @@ router.get("/cart", getCart);
 // router.get("/how-it-works", getHowItWorksPage);
 // router.get("/about-us", getAboutPage);
 
-router.get("/review-order/:paymentMethod", getReviewOrderPage);
+router.get("/checkout", getCheckout);
 router.get("/payment-success", authMiddleware, getPaymentSuccessResponse);
 router.get("/payment-cancel", authMiddleware, getPaymentCancelResponse);
 router.get("/maintenance", getmaintenanceMode);

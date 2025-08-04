@@ -1,6 +1,5 @@
 import ejs from "ejs";
 import bcrypt from "bcrypt";
-import twofactor from "node-2fa";
 import messages from "../utils/messages.js";
 import constant from "../config/constant.js";
 import country from "../config/countries.js"
@@ -18,10 +17,7 @@ import Giftcard from "../models/giftcard.model.js";
 import Ticket from "../models/ticket.model.js";
 import TempPaymentData from "../models/tempPaymentData.model.js";
 import Cart from "../models/cart.model.js";
-import { UAParser } from "ua-parser-js";
 import ResetPasswordToken from "../models/resetPasswordToken.model.js";
-import crypto from "crypto";
-
 
 export const getHomePage = async (req, res) => {
     try {
@@ -33,6 +29,7 @@ export const getHomePage = async (req, res) => {
 
         return res.render("home", {
             header: {
+                id: "home",
                 title: "Home",
                 user: userDetails || null,
             },
@@ -1047,153 +1044,82 @@ export const postChangePassword = async (req, res) => {
     }
 }
 
-export const getReviewOrderPage = async (req, res) => {
+export const getCheckout = async (req, res) => {
     try {
-        const param = req.params;
+        // const param = req.params;
 
-        const paymentMethod = param["paymentMethod"];
-        if (!paymentMethod) {
-            return res.redirect("/");
-        };
+        // const cartData = await getCartFromCookies(req);
 
-        const validMethods = [constant.PAYMENT_METHOD.STRIPE, constant.PAYMENT_METHOD.PAYPAL];
-        if (!paymentMethod || !validMethods.includes(parseInt(paymentMethod))) {
-            return res.redirect("/cart");
-        };
-
-        const cartData = await getCartFromCookies(req);
-
-        if (!Array.isArray(cartData) || cartData.length === 0) {
-            return res.redirect("/");
-        };
+        // if (!Array.isArray(cartData) || cartData.length === 0) {
+        //     return res.redirect("/");
+        // };
 
         const userDetails = req.session?.user ? await User.findById(req.session?.user?._id).select('-password -__v') : null;
 
-        let cartDetails = [];
-        if (cartData.length > 0) {
-            const celebIds = cartData.map(c => c.celebrityId);
-            const memberIds = cartData.flatMap(c => c.membershipList.map(m => m.membershipId));
+        // let cartDetails = [];
+        // if (cartData.length > 0) {
+        //     const celebIds = cartData.map(c => c.celebrityId);
+        //     const memberIds = cartData.flatMap(c => c.membershipList.map(m => m.membershipId));
 
-            const [celebrities, memberships] = await Promise.all([
-                Celebrity.find({ _id: { $in: celebIds } }).select('-__v'),
-                Membership.find({ _id: { $in: memberIds } }).select('-__v'),
-            ]);
+        //     const [celebrities, memberships] = await Promise.all([
+        //         Celebrity.find({ _id: { $in: celebIds } }).select('-__v'),
+        //         Membership.find({ _id: { $in: memberIds } }).select('-__v'),
+        //     ]);
 
-            cartDetails = cartData.map(cItem => {
-                const celeb = celebrities.find(c => c._id.toString() === cItem.celebrityId);
-                const membershipList = cItem.membershipList.map(mItem => {
-                    const membershipDetail = memberships.find(x => x._id.toString() === mItem.membershipId);
-                    return {
-                        ...membershipDetail.toObject(),
-                        totalQuantity: parseInt(mItem.totalQuantity),
-                        isSendGift: mItem.isSendGift,
-                        totalPriceByQuantity: parseInt(mItem.totalQuantity) * parseFloat(membershipDetail.price),
-                        totalEntries: parseInt(membershipDetail.membershipEntries * mItem.totalQuantity),
-                    };
-                });
-                return { celebrity: celeb, membershipList, allQuantity: cItem.quantity || 1, };
-            });
-        };
+        //     cartDetails = cartData.map(cItem => {
+        //         const celeb = celebrities.find(c => c._id.toString() === cItem.celebrityId);
+        //         const membershipList = cItem.membershipList.map(mItem => {
+        //             const membershipDetail = memberships.find(x => x._id.toString() === mItem.membershipId);
+        //             return {
+        //                 ...membershipDetail.toObject(),
+        //                 totalQuantity: parseInt(mItem.totalQuantity),
+        //                 isSendGift: mItem.isSendGift,
+        //                 totalPriceByQuantity: parseInt(mItem.totalQuantity) * parseFloat(membershipDetail.price),
+        //                 totalEntries: parseInt(membershipDetail.membershipEntries * mItem.totalQuantity),
+        //             };
+        //         });
+        //         return { celebrity: celeb, membershipList, allQuantity: cItem.quantity || 1, };
+        //     });
+        // };
 
-        let totalCelebrities = cartDetails.length;
-        let totalSubAmount = 0;
-        let totalGiftCount = 0;
-        let totalQtyCount = 0;
+        // let totalCelebrities = cartDetails.length;
+        // let totalSubAmount = 0;
+        // let totalGiftCount = 0;
+        // let totalQtyCount = 0;
 
-        cartDetails.forEach((cItem) => {
-            cItem.membershipList.forEach((m) => {
-                totalSubAmount += m.totalPriceByQuantity;
-                totalQtyCount += m.totalQuantity;
-                if (String(m.isSendGift) === 'true'){
-                    totalGiftCount++;
-                };
-            });
-        });
+        // cartDetails.forEach((cItem) => {
+        //     cItem.membershipList.forEach((m) => {
+        //         totalSubAmount += m.totalPriceByQuantity;
+        //         totalQtyCount += m.totalQuantity;
+        //         if (String(m.isSendGift) === 'true'){
+        //             totalGiftCount++;
+        //         };
+        //     });
+        // });
 
-        const allMembershipGift = cartDetails.every(item => 
-            item.membershipList.every(membership => membership.isSendGift === 'true')
-        );
+        // let totalAmount = totalSubAmount;
 
-        let totalAmount = totalSubAmount;
-
-        // ------------- Pack Limit Check Starts Here -----------------
-        let packLimitData = [];
-        if (userDetails && userDetails?.packLimit?.length > 0) {
-            cartDetails.forEach((cartItem) => {
-                const userCelebrityPack = userDetails.packLimit.find(
-                    u => u.celebrityId.toString() === cartItem.celebrity._id.toString()
-                );
-
-                cartItem.membershipList.forEach((mem) => {
-                    const membershipId = mem._id.toString();
-                    const cartQty = mem.totalQuantity;
-                    const cartEntries = mem.totalEntries;
-                    const maxAllowedPack = mem.userPackPurchaseLimit;
-                    const maxAllowedEntries = mem.userPackEntryLimit;
-
-                    const existingPack = userCelebrityPack?.packList?.find(
-                        p => p.membershipId.toString() === membershipId
-                    );
-
-                    const userPackPurchase = existingPack?.totalPackPurchase || 0;
-                    const userEntries = existingPack?.totalEntries || 0;
-
-                    const totalPackPurchaseAfterCart = userPackPurchase + cartQty;
-                    const totalEntriesAfterCart = userEntries + cartEntries;
-
-                    const isPackOverLimit = totalPackPurchaseAfterCart > maxAllowedPack;
-                    const isEntryOverLimit = totalEntriesAfterCart > maxAllowedEntries;
-
-                    if (isPackOverLimit || isEntryOverLimit) {
-                        packLimitData.push({
-                            celebrityId: cartItem.celebrity._id,
-                            celebrityName: cartItem.celebrity.name,
-                            membershipId: membershipId,
-                            membershipTitle: mem.name,
-                            currentPackPurchase: userPackPurchase,
-                            currentEntryCount: userEntries,
-                            cartQuantity: cartQty,
-                            cartEntries: cartEntries,
-                            totalPackPurchaseAfterCart,
-                            totalEntriesAfterCart,
-                            allowedPackLimit: maxAllowedPack,
-                            allowedEntryLimit: maxAllowedEntries,
-                            isPackOverLimit,
-                            isEntryOverLimit,
-                        });
-                    };
-                });
-            });
-        };
-
-        const isAnyLimitExceeded = packLimitData.length > 0;
-        // ------------- Pack Limit Check Ends Here -----------------
-
-        return res.render("users/review-order", {
+        return res.render("users/checkout", {
             header: {
-                page: "Review Order",
-                user: userDetails,
-                title: "Review Order",
-                id: "review-order",
+                page: "Checkout Order",
+                user: userDetails || null,
+                title: "Checkout Order",
+                id: "checkout-order",
             },
             body: {
-                payment_method: parseInt(paymentMethod),
-                cartDetails: cartDetails,
-                totalCelebrities,
-                totalSubAmount,
-                totalAmount,
-                totalGiftCount,
-                totalQtyCount,
-                allMembershipGift,
-                packLimitDetails: packLimitData,
-                limitPackExceeded: isAnyLimitExceeded,
+                // cartDetails: cartDetails,
+                // totalCelebrities,
+                // totalSubAmount,
+                // totalAmount,
+                // totalGiftCount,
+                // totalQtyCount,
             },
             footer: {
-                js: "review-order.js"
+                js: "checkout-order.js"
             },
         });
     } catch (error) {
-        log1(["Error in getReviewOrderPage----->", error]);
+        log1(["Error in getCheckout----->", error]);
         return res.json(errorResponse(messages.unexpectedDataError));
     }
 }

@@ -109,27 +109,6 @@ export const generateLoginToken = async (payload, req) => {
 
         if (!result) return errorResponse("Failed to generate login token", {});
 
-        // send mail
-        const mailFile = await ejs.renderFile('./views/emails/new_login_detected.ejs', {
-            location: country,
-            time: dateFormatByTimezone(result.created_at),
-            platform: req.ua?.deviceType, 
-            browser: req.ua?.browser,
-            version: req.ua?.version?.split(".").slice(0, 2).join("."),
-            ip: ip, 
-            os:  req.ua?.os,
-            userName: userData?.userName
-        });
-
-        const mailOptions = {
-            from: `${process.env.SUPPORT_MAIL}`,
-            to: `${userData?.email}`,
-            subject: "New Login Detected on Your MDF Account",
-            html: mailFile,
-        };
-        sendMail(mailOptions);
-        
-
         return token;
     } catch (error) {
         log1(["Error in generateLoginToken ----->", error]);

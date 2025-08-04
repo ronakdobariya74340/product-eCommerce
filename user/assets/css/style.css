@@ -65,6 +65,9 @@ img {
   max-width: 100%;
   height: auto;
 }
+.fs-16 {
+  font-size: 16px;
+}
 .bg-light {
   background-color: #f8f8f8 !important;
 }
@@ -978,14 +981,24 @@ blockquote.text-white cite span {
 .dropdown-cart-action {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0 0 0.5rem;
 }
 .dropdown-cart-action .btn {
   font-size: 1.3rem;
-  min-width: 110px;
+  width: 235px;
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
+}
+.login-btn {
+  border: 1px solid #fff;
+  padding: 2px 20px;
+  border-radius: 6px;
+  font-size: 18px;
+  margin-top: 4px;
+  margin-left: 3rem;
+  background-color: #fff;
+  color: #000;
 }
 .wishlist-link {
   display: flex;
@@ -1754,7 +1767,7 @@ blockquote.text-white cite span {
 .menu.sf-arrows .sf-with-ul {
   position: relative;
 }
-.menu.sf-arrows .sf-with-ul::after {
+/* .menu.sf-arrows .sf-with-ul::after {
   font-family: "molla";
   content: "\f110";
   position: absolute;
@@ -1764,7 +1777,7 @@ blockquote.text-white cite span {
   font-size: 1rem;
   line-height: 1;
   margin-top: -0.5rem;
-}
+} */
 .menu.sf-arrows ul .sf-with-ul {
   padding-right: 4rem;
 }
@@ -3102,13 +3115,15 @@ p {
 .header-5 .wishlist-link {
   margin-left: 3rem;
 }
-.header-5 .wishlist-link:not(:hover):not(:focus),
 .header-5 .search-toggle:not(:hover):not(:focus):not(.active),
 .header-5 .mobile-menu-toggler,
 .header-5 .wishlist-link:not(:hover):not(:focus),
 .header-5 .menu > li:not(:hover):not(.active):not(.show) > a,
 .header-5 .mobile-menu-toggler {
   color: #fff;
+}
+.header-5 .login-btn:not(:hover):not(:focus) {
+  color: #000;
 }
 .header-5 .logo {
   margin-top: 0;

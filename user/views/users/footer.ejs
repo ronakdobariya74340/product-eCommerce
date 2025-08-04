@@ -63,8 +63,7 @@
 
                                     <ul class="widget-list">
                                         <li><a href="javascript:;">Sign In</a></li>
-                                        <li><a href="javascript:;">View Cart</a></li>
-                                        <li><a href="javascript:;">My Wishlist</a></li>
+                                        <li><a href="/cart">View Cart</a></li>
                                         <li><a href="javascript:;">Track My Order</a></li>
                                         <li><a href="javascript:;">Help</a></li>
                                     </ul>
@@ -100,31 +99,331 @@
         <!-- Mobile Menu -->
         <div class="mobile-menu-overlay"></div>
 
-        <div class="container newsletter-popup-container mfp-hide" id="newsletter-popup-form">
-            <div class="row justify-content-center">
-                <div class="col-10">
-                    <div class="row no-gutters bg-white newsletter-popup-content">
-                        <div class="col-xl-3-5col col-lg-7 banner-content-wrap">
-                            <div class="banner-content text-center">
-                                <img src="/images/popup/newsletter/logo.png" class="logo" alt="logo" width="60" height="15">
-                                <h2 class="banner-title">get <span>25<light>%</light></span> off</h2>
-                                <p>Subscribe to the Molla eCommerce newsletter to receive timely updates from your favorite products.</p>
-                                <form action="#">
-                                    <div class="input-group input-group-round">
-                                        <input type="email" class="form-control form-control-white" placeholder="Your Email Address" aria-label="Email Adress" required>
-                                        <div class="input-group-append">
-                                            <button class="btn" type="submit"><span>go</span></button>
+        <!-- Sign in modal-->
+        <div class="modal fade" id="signinModal" tabindex="-1" aria-labelledby="signinModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered sf-modal">
+                <div class="modal-content">
+                    <button class="modal-close-btn" data-bs-dismiss="modal"></button>
+                    <div class="login inner-content">
+                        <div class="sf-auth-modal-heading">
+                            <div class="auth-img">
+                                <img src="/images/demos/demo-5/logo.png" alt="" />
+                            </div>
+                            <h3>Welcome to product eCommerce!</h3>
+                            <p>Sign in to your account to continue</p>
+                        </div>
+                        <div class="sf-modal-body">
+                            <div class="auth-form">
+                                <form>
+                                    <div class="inp-group">
+                                        <label for="">Email Address <span>*</span></label>
+                                        <div class="input-wrapper">
+                                            <input id="email" type="email" name="email" placeholder="Enter your email address" value="">
+                                        </div>
+                                    </div>
+                                    <div class="inp-group">
+                                        <div class="d-flex align-items-start justify-content-between">
+                                            <label for="">Password <span>*</span></label>
+                                            <button type="button" class="fr-btn" data-bs-toggle="modal" data-bs-target="#forgot-password-modal">
+                                                Forgot?
+                                            </button>
+                                        </div>
+                        
+                                        <!-- add the key for adding error(error) -->
+                                        <div class="input-wrapper">
+                                            <input class="password" id="password" type="password" name="password" placeholder="Enter your password" value="">
+                                            <div class="inp-elem eye"></div>
+                                        </div>
+                                        <span class="helper-text d-none">Incorrect! Please Check and enter correct password.</span>
+                                    </div>
+                                </form>
+                                <div class="my-4">
+                                    <button class="app-btn spinner-btn w-100" id="login_btn">Login <span class="spinner"></span></button>
+                                </div>
+                                <div class="auth-nav">Create new account?<button data-bs-toggle="modal" data-bs-target="#signup-modal">Register</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forgot password Modal -->
+        <div class="modal fade" id="forgot-password-modal" tabindex="-1" aria-labelledby="forgotpasswordModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered sf-modal">
+                <div class="modal-content">
+                    <button class="modal-close-btn" data-bs-dismiss="modal"></button>
+                    <div class="forgot-password inner-content">
+                        <div class="sf-auth-modal-heading">
+                            <div class="auth-img">
+                                <img src="/images/forgot.png" alt="">
+                            </div>
+                            <h3>Forgot Password?</h3>
+                            <p>Don't worry! It happens. Please enter the email address associated with your account.</p>
+                        </div>
+                        <div class="sf-modal-body">
+                            <div class="auth-form">
+                                <form>
+                                    <div class="inp-group">
+                                        <label for="">Email Address <span>*</span></label>
+                                        <div class="input-wrapper">
+                                            <input type="text" placeholder="john@gmail.com" id="forgot-password-email-input"> 
                                         </div>
                                     </div>
                                 </form>
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="register-policy-2" required>
-                                    <label class="custom-control-label" for="register-policy-2">Do not show this popup again</label>
+                                <div class="my-4">
+                                    <button class="app-btn spinner-btn w-100" id="send-reset-link-btn">Send Reset Link <span class="spinner"></span></button>
+                                </div>
+                                <div class="auth-nav mb-4">Remembered Password?<button class="back-to-login">Login</button></div>
+                            </div>
+                        </div>
+                        <div class="support-link">
+                            <a href="mailto:<%= process.env.SUPPORT_MAIL %>"><%= process.env.SUPPORT_MAIL %></a>  
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verify Password -->
+        <div class="modal fade" id="reset-password-modal" tabindex="-1" aria-labelledby="verifypasswordModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered sf-modal">
+                <div class="modal-content">
+                    <button class="modal-close-btn" data-bs-dismiss="modal"></button>
+                    <div class="verify-password inner-content">
+                        <div class="sf-auth-modal-heading">
+                            <div class="auth-img">
+                                <img src="/images/lock.png" alt="" />
+                            </div>
+                            <h3>Verify Account</h3>
+                            <p id="reset-password-verify-otp-email">
+                                Please enter the 6 digit security code sent to <span>joh****@gmail.com</span> below, then set a new
+                                password to complete the reset process. Keep it safe and be sure to check your junk folder! The code will
+                                be valid for <b>10 minutes</b>.
+                            </p>
+                        </div>
+                        <div class="sf-modal-body">
+                            <div class="auth-form">
+                                <form>
+                                    <div class="inp-group">
+                                        <label for="">Enter Code <span>*</span></label>
+                                        <div class="input-wrapper">
+                                            <input type="number" max="6" placeholder="XXXXXX" id="reset-password-verify-otp-input"/>
+                                            <div class="inp-elem timer" id="resend-reset-timer"></div>
+                                            <button class="resend-reset-btn">Resend Code</button>
+                                        </div>
+                                    </div>
+                                    <div class="inp-group">
+                                        <label for="">New Password <span>*</span></label>
+                                        <div class="input-wrapper">
+                                            <input type="password" placeholder="XXXXXX" id="new-password-input"/>
+                                            <div class="inp-elem eye"></div>
+                                        </div>
+                                        <span class="helper-text">
+                                            Your new password should be at least 8 characters and contain an uppercase letter and a number.
+                                        </span>
+                                    </div>
+                                </form>
+                                <div class="my-4">
+                                    <button class="app-btn spinner-btn w-100" id="verify-reset-btn">Verify & Reset <span class="spinner"></span></button>
+                                </div>
+                                <div class="auth-nav mb-4">Remembered Password?<button class="back-to-login">Login</button></div>
+                            </div>
+                        </div>
+                        <div class="support-link">
+                            <a href="mailto:<%= process.env.SUPPORT_MAIL %>"><%= process.env.SUPPORT_MAIL %></a>  
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reset success Password -->
+        <div class="modal fade" id="reset-password-successful-modal" tabindex="-1" aria-labelledby="resetpasswordsuccessfulModelLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered sf-modal">
+                <div class="modal-content">
+                    <button class="modal-close-btn" data-bs-dismiss="modal"></button>
+                    <div class="Reset Success inner-content">
+                        <div class="sf-auth-modal-heading">
+                            <div class="auth-img">
+                                <img src="/images/success.png" alt="" />
+                            </div>
+                            <h3>Password Reset Successful!</h3>
+                            <p>Your password has been successfully reset. You can now log in with your new password.</p>
+                        </div>
+                        <div class="sf-modal-body">
+                            <div class="auth-form">
+                                <div class="my-4">
+                                    <button class="app-btn w-100 back-to-login">Back to Login</button>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-2-5col col-lg-5 ">
-                            <img src="/images/popup/newsletter/img-1.jpg" class="newsletter-img" alt="newsletter">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- signup Modal -->
+        <div class="modal fade" id="signup-modal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered sf-modal">
+                <div class="modal-content">
+                    <button class="modal-close-btn" data-bs-dismiss="modal"></button>
+                    <div class="signup inner-content">
+                        <div class="sf-auth-modal-heading">
+                            <div class="auth-img">
+                                <img src="/images/demos/demo-5/logo.png" alt="" />
+                            </div>
+                            <h3>Join Product eCommerce!</h3>
+                        </div>
+                        <div class="sf-modal-body">
+                            <div class="auth-form">
+                                <form id="register_form">
+                                    <div class="inp-group">
+                                        <label for="">Full Name <span>*</span></label>
+                                        <div class="input-wrapper">
+                                            <input type="text" name="username" id="username" placeholder="Enter your full name">
+                                        </div>
+                                    </div>
+                                    <div class="inp-group">
+                                        <label for="">Email Address <span>*</span></label>
+                                        <div class="input-wrapper">
+                                            <input type="text" id="register_email" name="email" placeholder="Enter your email address">
+                                        </div>
+                                    </div>
+                                    <div class="inp-group">
+                                        <div class="d-flex align-items-start justify-content-between">
+                                            <label for="">Password <span>*</span></label>
+                                        </div>
+                                        <div class="input-wrapper">
+                                            <input class="password" id="register_password" type="password" name="password"
+                                            placeholder="Enter your password">
+                                            <div class="inp-elem eye"></div>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="form-check my-4">
+                                    <input class="form-check-input" type="checkbox" value="" id="terms_checkbox">
+                                    <span class="form-check-label ml-10" for="terms_checkbox">
+                                        By registering, you agree to our <a href="/terms-condition">Terms & Privacy Policy.</a>
+                                    </span>
+                                </div>
+                                <div class="my-4">
+                                    <button class="app-btn spinner-btn w-100" id="register_btn">Register <span class="spinner"></span></button>
+                                </div>
+                                <div class="auth-nav">Already a member?<button data-bs-toggle="modal" data-bs-target="#signinModal">Login</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register OTP Verify account -->
+        <div class="modal fade" id="verify-account-modal" tabindex="-1" aria-labelledby="verifyaccountModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered sf-modal">
+                <div class="modal-content">
+                    <input type="hidden" id="verify_token_id" value="" />
+                    <button class="modal-close-btn" data-bs-dismiss="modal"></button>
+                    <div class="verify-account inner-content">
+                        <div class="sf-auth-modal-heading">
+                            <div class="auth-img">
+                                <img src="/images/lock.png" alt="" />
+                            </div>
+                            <h3>Verify Account</h3>
+                            <p id="verify-account-email">
+                                Please enter the 6 digit security code sent to <span></span> below. The code will be valid for <b>10 minutes</b>. Be sure to check your junk folder!
+                            </p>
+                        </div>
+                        <div class="sf-modal-body">
+                            <div class="auth-form">
+                                <form>
+                                    <div class="inp-group">
+                                        <label for="">Enter Code <span>*</span></label>
+                                        <div class="input-wrapper">
+                                            <input type="number" placeholder="XXXXXX" id="otp-input" />
+                                            <span class="inp-elem" id="resend-timer"></span>
+                                            <button  type="button"  class="resend-btn">Resend Code</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="my-4">
+                                    <button class="app-btn spinner-btn w-100" id="verify-otp">Verify <span class="spinner"></span></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="support-link">
+                            <a href="mailto:<%= process.env.SUPPORT_MAIL %>"><%= process.env.SUPPORT_MAIL %></a>  
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- logout modal -->
+        <div class="modal fade" id="logout-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered sf-modal">
+                <div class="modal-content">
+                    <button class="modal-close-btn" data-bs-dismiss="modal"></button>
+                    <div class="inner-content">
+                        <div class="sf-modal-heading">
+                            <div class="heading-img">
+                                <img src="/images/icon-switch-lg.svg" alt="" />
+                            </div>
+                            <h3 class="mb-2">Come back soon!</h3>
+                            <p class="mb-3">You are about to log out of your account. Are you sure you want to proceed?</p>
+                        </div>
+                        <div class="session-action-btn mb-0">
+                            <button class="app-btn secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button class="app-btn" id="user_logout">Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- change Password -->
+        <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered sf-modal">
+                <div class="modal-content">
+                    <button class="modal-close-btn" data-bs-dismiss="modal"></button>
+                    <div class="inner-content">
+                        <div class="heading-type-2">
+                            <h3>Change Password</h3>
+                        </div>
+                        <hr />
+                        <p class="my-3">
+                            Your new password must be different from your current password to ensure account security.
+                        </p>
+                        <div class="sf-modal-body">
+                            <div class="inp-group">
+                                <label for="">Current Password <span>*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="password" placeholder="XXXXXX" id="current-password" />
+                                    <div class="inp-elem eye"></div>
+                                </div>
+                            </div>
+                            <div class="inp-group">
+                                <label for="">New Password <span>*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="password" placeholder="XXXXXX" id="new-password" />
+                                    <div class="inp-elem eye"></div>
+                                </div>
+                                <span class="helper-text">
+                                    Your new password should be at least 8 characters and contain an uppercase letter and a number.
+                                </span>
+                            </div>
+                            <div class="inp-group">
+                                <label for="">Confirm New Password <span>*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="password" placeholder="XXXXXX" id="confirm-password" />
+                                    <div class="inp-elem eye"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="app-btn spinner-btn w-100" id="update-password-btn">
+                                    Update<span class="spinner"></span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -141,14 +440,19 @@
         <script src="/js/jquery.magnific-popup.min.js"></script>
         <script src="/js/jquery.plugin.min.js"></script>
         <script src="/js/jquery.countdown.min.js"></script>
+        <!-- <script src="/js/jquery-3.7.1.min.js"></script> -->
 
         <!-- Main JS File -->
         <script src="/js/main.js"></script>
         <script src="/js/demos/demo-5.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+        <!-- Bootstrap Bundle JS (includes Popper) -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://js.stripe.com/v3/"></script>
         <script src="/js/common.js"></script>
         <script src="/js/custom.js"></script>
+        <script src="/js/login.js"></script>
+        <script src="/js/register.js"></script>
 
         <% if(footer.js){ %>
             <script src="/js/<%- footer.js %>"></script>
