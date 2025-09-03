@@ -1,0 +1,97 @@
+<%
+    function formatDate(date) {
+        let d = new Date(date);
+        let day = ('0' + d.getDate()).slice(-2);
+        let month = ('0' + (d.getMonth() + 1)).slice(-2);
+        let year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+%>
+
+<div class="admin-table mt-30">
+    <div class="table-responsive">
+        <table>
+            <thead class="table-light">
+                <tr>
+                    <th>Product Name</th>
+                    <th>Product Category</th>
+                    <th>Price</th>
+                    <th>description</th>
+                    <th>Status</th>
+                    <th class="text-center ts">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if(body?.totalProduct !==undefined && body?.totalProduct > 0) { body?.product.forEach((product, index)=> { let start_index = (parseInt(body?.param?.currentPage) - 1) * parseInt(body?.param?.itemPerPage) + index + 1; %>
+                    <tr>
+                        <td class="text-black fw-bold">
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar celeb text-white">
+                                    <% if (product?.image?.length > 0) { %>
+                                        <img src="/images/ProductImages/<%= product?.image[0] %>" alt="Product Image">
+                                    <% } %>
+                                </div>
+                                <span class="ms-2 fs-6 celeb-veryfy"><%= product?.name %></span>
+                            </div>
+                        </td>
+                        <td class=""><%= product?.categoryInfo?.name ? product?.categoryInfo?.name : "-" %></td>
+                        <td class=""><%= product?.productPrice ? product?.productPrice : 0 %></td>
+                        <td class=""><%= product?.description ? product?.description : 0 %></td>
+                        <!-- <td class="">
+                            <div class="checkbox off position-relative mt-0">
+                                <input type="checkbox" class="" id="celeb_status" <% if (parseInt(product?.status) === 2) { %> checked <% } %>>
+                                <label for="celeb_status"></label>
+                            </div>
+                        </td> -->
+                        <td>
+                            <% if (product?.status === 1) { %>
+                                <span class="badge bg-danger">Inactive</span>
+                            <% } else if (product?.status === 2) { %>
+                                <span class="badge bg-success">Active</span>
+                            <% } %>
+                        </td>
+                        <td class="text-center ts">
+                            <a href="/admin/product-details/<%= product?._id %>" class="c-tooltip table-tooltip me-1" tooltip-text="Setting">
+                                <svg width="36" height="37" viewBox="0 0 36 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M29 1H7C3.41015 1 0.5 3.91015 0.5 7.5V29.5C0.5 33.0899 3.41015 36 7 36H29C32.5899 36 35.5 33.0899 35.5 29.5V7.5C35.5 3.91015 32.5899 1 29 1Z" fill="white" stroke="#BD903F" />
+                                    <path d="M24.7303 18.9531L25.8874 19.9835C26.1011 20.1618 26.2439 20.4107 26.2899 20.6852C26.3359 20.9597 26.2822 21.2416 26.1383 21.4798L24.7431 23.8632C24.6349 24.0456 24.4803 24.1962 24.2951 24.2997C24.1078 24.4033 23.8974 24.4583 23.6833 24.4597C23.5505 24.4605 23.4183 24.4406 23.2916 24.4008L21.8106 23.9118C21.5512 24.0782 21.2816 24.2271 21.0017 24.3585L20.6906 25.86C20.6331 26.1362 20.4793 26.3829 20.2567 26.5563C20.0313 26.7327 19.7519 26.8259 19.4657 26.82H16.5767C16.2905 26.8259 16.0111 26.7327 15.7857 26.5563C15.5636 26.3827 15.4103 26.136 15.353 25.86L15.0407 24.3585C14.7645 24.2254 14.4965 24.0758 14.2382 23.9105L12.7521 24.4008C12.6254 24.4406 12.4932 24.4605 12.3604 24.4597C12.1467 24.4581 11.9368 24.4031 11.7498 24.2997C11.5648 24.1965 11.4103 24.0464 11.3018 23.8644L9.85671 21.4798C9.70647 21.2394 9.64907 20.9525 9.69525 20.6728C9.74144 20.3931 9.88804 20.1398 10.1076 19.9604L11.2634 18.5V18.0468L10.1063 17.0164C9.89263 16.8381 9.74986 16.5892 9.70384 16.3147C9.65782 16.0403 9.71159 15.7584 9.85543 15.5201L11.3005 13.1368C11.4088 12.9543 11.5633 12.8037 11.7486 12.7003C11.9355 12.5968 12.1454 12.5418 12.3591 12.5403C12.4907 12.532 12.6229 12.5441 12.7508 12.5761L14.2074 13.0881C14.4677 12.9217 14.7374 12.7728 15.0164 12.6414L15.3287 11.14C15.3859 10.8639 15.5392 10.6172 15.7614 10.4436C15.9868 10.2672 16.2662 10.174 16.5524 10.18H19.417C19.7032 10.174 19.9827 10.2672 20.2081 10.4436C20.4321 10.619 20.5857 10.866 20.6407 11.14L20.953 12.6414C21.2304 12.7737 21.4979 12.923 21.7556 13.0894L23.243 12.6004C23.408 12.5467 23.5825 12.5279 23.7552 12.5451C23.9279 12.5623 24.0952 12.6151 24.2465 12.7003C24.4321 12.8052 24.5857 12.9563 24.6945 13.1355L26.1383 15.5201C26.2906 15.7585 26.3509 16.0441 26.308 16.3237C26.2652 16.6033 26.122 16.8577 25.9054 17.0395L24.7303 18.0404V18.9531Z" stroke="#BD903F" />
+                                    <path d="M21.2006 18.5C21.2006 19.3487 20.8635 20.1626 20.2633 20.7627C19.6632 21.3628 18.8493 21.7 18.0006 21.7C17.1519 21.7 16.338 21.3628 15.7379 20.7627C15.1377 20.1626 14.8006 19.3487 14.8006 18.5C14.8006 17.6513 15.1377 16.8373 15.7379 16.2372C16.338 15.6371 17.1519 15.3 18.0006 15.3C18.8493 15.3 19.6632 15.6371 20.2633 16.2372C20.8635 16.8373 21.2006 17.6513 21.2006 18.5Z" stroke="#BD903F" />
+                                </svg>
+                            </a>
+                            <a href="javascript:void(0);" data-product-id="<%= product?._id %>" data-bs-toggle="modal" data-bs-target="#addProductModal" class="c-tooltip table-tooltip data-edit me-1 editProduct" tooltip-text="Edit">
+                                <svg width="36" height="37" viewBox="0 0 36 37" fill="none" xmlns="http://www.w3.org/2000/svg" >
+                                    <rect x="0.5" y="1" width="35" height="35" rx="6.5" fill="white"></rect>
+                                    <rect x="0.5" y="1" width="35" height="35" rx="6.5" stroke="#7E8B95"></rect>
+                                    <path d="M10.668 25.8333H14.3346L23.9596 16.2083C24.2004 15.9675 24.3914 15.6817 24.5217 15.3671C24.652 15.0526 24.719 14.7154 24.719 14.375C24.719 14.0345 24.652 13.6973 24.5217 13.3828C24.3914 13.0682 24.2004 12.7824 23.9596 12.5416C23.7189 12.3009 23.4331 12.1099 23.1185 11.9796C22.8039 11.8493 22.4668 11.7822 22.1263 11.7822C21.7858 11.7822 21.4487 11.8493 21.1341 11.9796C20.8195 12.1099 20.5337 12.3009 20.293 12.5416L10.668 22.1666V25.8333Z"stroke="#7E8B95" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M19.375 13.458L23.0417 17.1247" stroke="#7E8B95" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </a>
+                            <a href="javascript:void(0);" data-bs-toggle="modal" data-id="<%= product?._id %>" data-bs-target="#deleteProductModal" class="c-tooltip table-tooltip delete_product" tooltip-text="Delete">
+                                <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" id="delete-icon">
+                                    <rect x="0.5" y="0.5" width="35" height="35" rx="6.5" fill="white" ></rect>
+                                    <rect x="0.5" y="0.5" width="35" height="35" rx="6.5" stroke="#CE2B30"></rect>
+                                    <g clip-path="url(#clip0_460_27302)">
+                                        <path d="M10.6641 13.417H25.3307" stroke="#CE2B30" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        <path d="M16.1641 17.083V22.583" stroke="#CE2B30" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        <path d="M19.8359 17.083V22.583" stroke="#CE2B30" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        <path d="M11.5859 13.417L12.5026 24.417C12.5026 24.9032 12.6958 25.3695 13.0396 25.7134C13.3834 26.0572 13.8497 26.2503 14.3359 26.2503H21.6693C22.1555 26.2503 22.6218 26.0572 22.9656 25.7134C23.3094 25.3695 23.5026 24.9032 23.5026 24.417L24.4193 13.417" stroke="#CE2B30" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        <path d="M15.25 13.4167V10.6667C15.25 10.4236 15.3466 10.1904 15.5185 10.0185C15.6904 9.84658 15.9236 9.75 16.1667 9.75H19.8333C20.0764 9.75 20.3096 9.84658 20.4815 10.0185C20.6534 10.1904 20.75 10.4236 20.75 10.6667V13.4167" stroke="#CE2B30" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    </g>
+                                    <defs>
+                                        <clipPath id="clip0_460_27302">
+                                            <rect width="22" height="22" fill="white" transform="translate(7 7)"></rect>
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                <% }); } else { %>
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No product found</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>

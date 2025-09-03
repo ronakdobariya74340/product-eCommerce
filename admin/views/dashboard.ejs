@@ -1,0 +1,103 @@
+<%- include("header") %>
+  <div class="content-area pb-5">
+    
+      <div class="static-card-group mb-30">
+        <div class="row gy-4">
+          
+          <div class="col-xl-6 col-md-6">
+            <div class="static-card bg-white">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="static-data">
+                  <span class="sd-title fs-14 d-block">Total Users</span>
+                  <span class="sd-data"><%= body?.total_users || 0 %></span>
+
+                </div>
+                <div class="sc-img">
+                  <img src="/images/user.svg" alt="bot">
+                </div>
+              </div>
+              <div class="static-inner">
+                <div class="badge bg-success">Active: <span><%= body?.total_active_users || 0 %></span>
+                </div>
+                <div class="badge bg-warning">Pending: <span><%= body?.total_pending_users || 0 %></span>
+                </div>
+                <div class="badge bg-danger">Suspended: <span><%= body?.total_suspended_users || 0 %></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-6 col-md-6">
+            <div class="static-card bg-white">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="static-data">
+                  <span class="sd-title fs-14 d-block">Total Product</span>
+                  <span class="sd-data"><%= body?.totalProduct || 0 %></span>
+                </div>
+                <div class="sc-img">
+                  <img src="/images/smile.svg" alt="bot">
+                </div>
+              </div>
+              <div class="static-inner">
+                <div class="badge bg-success">Active: <span><%= body?.active_product || 0 %></span></div>
+                <div class="badge bg-danger">Inactive: <span><%= body?.inActive_product || 0 %></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-6 col-md-6">
+            <div class="static-card bg-white">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="static-data">
+                  <span class="sd-title fs-14 d-block">Total Order</span>
+                  <span class="sd-data"><%= body?.total_order || 0 %></span>
+
+                </div>
+                <div class="sc-img">
+                  <img src="/images/table.svg" alt="bot">
+                </div>
+              </div>
+              <div class="static-inner">
+                <div class="w-100">
+                  <span class="badge bg-lifted">
+                    Complete Order: <span><%= body?.total_complete_order || 0 %></span>
+                  </span>
+                </div>
+                <div class="w-100">
+                  <span class="badge bg-warning">
+                    Pending Order: <span><%= body?.total_pending_order || 0 %></span>
+                  </span>
+                </div>
+                <div class="w-100">
+                  <span class="badge bg-purple">
+                    Return Order: <span><%= body?.total_return_order || 0 %></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-6 col-md-6">
+            <div class="static-card bg-white">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="static-data">
+                  <span class="sd-title fs-14 d-block">Total Transctions</span>
+                  <span class="sd-data"><%= body?.total_transactions || 0 %></span>
+
+                </div>
+                <div class="sc-img">
+                  <img src="/images/dollor.svg" alt="bot">
+                </div>
+              </div>
+              <div class="static-inner d-flex align-items-center justify-content-between">
+                  <p>Pending Transctions</p>
+                  <span class="fw-semibold badge bg-success">
+                    <%= body?.total_pending_transactions || 0 %>
+                  </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+</div>
+  <%- include("footer") %>

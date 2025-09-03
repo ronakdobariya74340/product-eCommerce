@@ -1,0 +1,59 @@
+<%
+    function formatDateTime(date) {
+        const d = new Date(date);
+        const day = ('0' + d.getDate()).slice(-2);
+        const month = ('0' + (d.getMonth() + 1)).slice(-2);
+        const year = d.getFullYear();
+        let hours = d.getHours();
+        const minutes = ('0' + d.getMinutes()).slice(-2);
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 0 should be 12
+        const hourStr = ('0' + hours).slice(-2);
+        return `${day}/${month}/${year} ${hourStr}:${minutes} ${ampm}`;
+    }
+%>  
+<div class="admin-table mt-30">
+    <div class="table-responsive">
+      <table class="align-middle text-nowrap">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>User Name</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (body?.giftRedeemList?.length > 0) {
+            body.giftRedeemList.forEach((gift, index) => {
+              let start_index = (parseInt(body?.param?.currentPage) - 1) * parseInt(body?.param?.itemPerPage) + index + 1;
+          %>
+            <tr data-id="<%= gift?._id %>">
+              <td><%- Number(start_index) %></td>
+              <td><%- gift?.userId?.userName || '—' %></td>
+              <td><%- gift?.fromEmail || '—' %></td>
+              <td><%- gift?.toEmail || '—' %></td>
+              <td>$<%- gift?.amount?.toFixed(2) || '0.00' %></td>
+              <td>
+                <% if (gift?.status === 1) { %>
+                  <span class="badge bg-success">Active</span>
+                <% } else if (gift?.status === 2) { %>
+                  <span class="badge bg-warning">Redeemed</span>
+                <% } %>
+              </td>
+              <td><%= gift?.created_at ? formatDateTime(gift?.created_at  ) : 'N/A' %></td>
+            </tr>
+          <% }); } else { %>
+            <tr>
+              <td colspan="7" class="text-center text-muted">No gift records found</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  

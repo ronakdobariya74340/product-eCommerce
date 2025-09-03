@@ -1,0 +1,149 @@
+<%
+    function formatDateTime(date) {
+        const d = new Date(date);
+        const day = ('0' + d.getDate()).slice(-2);
+        const month = ('0' + (d.getMonth() + 1)).slice(-2);
+        const year = d.getFullYear();
+        let hours = d.getHours();
+        const minutes = ('0' + d.getMinutes()).slice(-2);
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 0 should be 12
+        const hourStr = ('0' + hours).slice(-2);
+        return `${day}/${month}/${year} ${hourStr}:${minutes} ${ampm}`;
+    }
+    function formatDate(dateString) {
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
+        const date = new Date(dateString)
+        return date.toLocaleDateString('en-GB', options)
+    };
+%>  
+<div class="admin-table mt-20">
+  <div class="table-responsive">
+    <table class="align-middle text-nowrap">
+        <thead class="table-light">
+          <tr>
+            <th>TRX ID</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Celebrities</th>
+            <th>Cost (USD)</th>
+            <th>Total Entries</th>
+            <th>Gift Info</th>
+            <th>Payment Method</th>
+            <th>Payment Status</th>
+            <th>Ticket Status</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% if (body?.totalTransaction !==  undefined && body?.totalTransaction> 0) {
+                        body.transactionList.forEach((transaction, index) => {
+                        let start_index = (parseInt(body?.param?.currentPage) - 1) * parseInt(body?.param?.itemPerPage)
+                        + index + 1;
+                    
+                        let giftEntries = (transaction?.giftcards || []).reduce((total, obj) => total + obj.totalEntries, 0);
+                        let userEntries = transaction?.totalEntries - giftEntries;
+                 
+                        %>
+        <tr>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+                <span class="fw-bold">
+                    TXN-<%= transaction?._id ? transaction._id?.toString().slice(0, 8) : 'N/A' %>
+                  </span>                  
+              <button class="table-btn copy-btn" data-copy="<%= transaction?._id %>">
+                <img src="../../images/icon-copy-lg.svg" alt="copy" />
+                <span class="copied-text">Copied!</span>
+              </button>
+            </div>
+          </td>
+          <td>
+            <span>
+              <%= transaction?.created_at ? formatDate(transaction.created_at) : 'N/A' %>
+            </span>
+          </td>
+          <td>
+            <% if (transaction?.type === 1 ){ %>
+                <span class="badge bg-orange">Free</span>
+            <% } else if (userEntries > 0 && giftEntries === 0) { %>
+                <span class="badge bg-success">Paid</span>
+            <% } else if (userEntries === 0 && giftEntries > 0 && transaction?.giftcards[0]?.giftSendStatus === 1) { %>
+                <span class="badge bg-purple">Gift sent</span>
+            <% } else if (userEntries === 0 && giftEntries > 0) { %>
+                <span class="badge bg-info">Gift</span>
+            <% } else if (userEntries > 0 && giftEntries > 0) { %>
+                <span class="badge bg-warning">Mixed</span>
+            <% }  %>
+          </td>
+          <!-- <td>
+            <% if (transaction?.celebrities && transaction.celebrities.length> 0) { %>
+            <%= transaction.celebrities.slice(0, 2).join(", ") %>
+            <% if (transaction.celebrities.length > 2) { %>
+            <span>+<%= transaction.celebrities.length - 2 %> more</span>
+            <% } %>
+            <span class=" badge bg-gray fw-normal">
+                <%= transaction.celebrities.length %></span>
+                <% } else { %>
+                    <span>-</span>
+                    <% } %>
+                </td> -->
+            <td>
+            <span><%= transaction.celebrities[0].name %></span>
+            </td>
+          <td>
+            <span class="fw-bold">$<%= transaction?.totalCost || 0 %></span>
+          </td>
+          <td>
+            <span class="fw-bold">
+              <%= transaction?.totalEntries || 0 %>
+            </span>  
+            <p class="fs-14">
+              User: <%= userEntries || 0 %> |
+              Gift: <%= giftEntries || 0 %>
+            </p>
+          </td>
+          <td>
+              <% if (userEntries === 0 && giftEntries > 0 &&  transaction?.giftcards?.length === 1 &&  transaction?.giftcards[0]?.giftSendStatus === 1) { %>
+                <span><strong>To: </strong><%= transaction?.giftcards[0]?.toEmail %></span>
+            <% }else if (giftEntries > 0 && transaction?.giftcards?.length > 1) { %>
+                <span><strong>To: </strong><%= transaction?.giftcards?.length + " recipients" %></span>
+            <% } else { %>
+                <span>-</span>
+            <% } %>
+        </td>
+          <td>
+            <span class="badge bg-info"><%= transaction?.paymentMethod === 2 ? "Paypal" : "Stripe" %></span>
+          </td>
+          <td>
+            <% if (transaction?.status===2) { %>
+            <span class="badge bg-success">Success</span>
+            <% } else if (transaction?.status===3) { %>
+            <span class="badge bg-danger">Failed</span>
+            <% } else { %>
+            <span class="badge bg-warning">Pending</span>
+            <% } %>
+          </td>
+          <td>
+            <% if (transaction?.status===1) { %>
+            <span class="badge bg-success">Active</span>
+            <% } else if (transaction?.status===2){ %>
+            <span class="badge bg-lifted">Redeemed</span>
+            <% } %>
+          </td>
+          <td class="text-center">
+            <button class="view-icon" type="button" data-bs-toggle="modal" data-bs-target="#gtView">
+              <span class="opacity-0">View</span>
+            </button>
+          </td>
+        </tr>
+        <% }) } else { %>
+        <tr>
+          <td colspan="11" class="text-center">No transactions found</td>
+        </tr>
+        <% } %>
+      </tbody>
+
+    </table>
+  </div>
+</div>

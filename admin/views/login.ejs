@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <title>MDF | Admin Panel</title>
+      <meta charset="utf-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+      <link rel='icon' type='image/x-icon' href='/images/favicon.ico' />
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Sora:wght@100..800&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="/css/all.min.css" />
+      <link rel="stylesheet" href="/css/bootstrap.min.css" />
+      <link rel="stylesheet" href="/css/style.css" />
+   </head>
+   <body>
+      <div class="preloader">
+         <div class="loading"><svg viewBox="0 0 84 24" fill="#3BC117"><circle cx="18" cy="12" r="6"></circle><circle cx="18" cy="12" r="6"></circle><circle cx="42" cy="12" r="6"></circle><circle cx="66" cy="12" r="6"></circle></svg></div>
+      </div>
+      <div class="login-main d-flex justify-content-center align-items-center">
+         <div class="login-box">
+            <div class="l-head text-center">
+               <div class="auth-logo mb-20"> 
+                  <img src="/images/logo.svg" alt="company">
+               </div>
+               <h2>Admin Login</h2>
+               <p>Manage Your Platform with Full Access</p>
+            </div>
+            <div class="l-form mt-20">
+               <form id="login-form">
+                  <div class="form-group">
+                     <input class="form-control" type="email" name="email" id="email" placeholder="Enter your email address">
+                  </div>
+                  <div class="form-group eye-icon position-relative mt-15">
+                     <input class="form-control" type="password" name="password" id="password" placeholder="Enter your password">
+                     <span class="ico-right cursor-pointer toggle-password" toggle="#password">
+                        <i class="far fa-eye-slash fa-fw" id="ey2"></i>
+                     </span>
+                  </div>
+                  <div class="form-group mt-15">
+                     <button class="btn btn-primary w-100" id="login" type="button" disabled>Login</button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   </body>
+   <script src="/js/bootstrap.bundle.js"></script>
+   <script src="/js/jquery-3.7.1.min.js"></script>
+   <script src="/js/common.js"></script>
+   <script src="/js/custom.js"></script>
+   <% if (footer?.js && Array.isArray(footer?.js) && footer?.js.length > 0) { %>
+      <% footer?.js.forEach(file => { %>
+         <script src="/js/<%- file %>"></script>
+      <% }); %>
+   <% } %>
+</html>

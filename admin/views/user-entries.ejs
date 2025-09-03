@@ -1,0 +1,135 @@
+<!-- <div class="table-responsive">
+    <table class="align-middle text-nowrap">
+      <thead class="table-light">
+        <tr>
+          <th>Date</th>
+          <th>Product</th>
+          <th>Pack Type</th>
+          <th>Entries</th>
+          <th>Source</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span>12/20/2024</span></td>
+          <td><span class="fw-bold">Emily Stone</span></td>
+          <td><span class="badge bg-warning">FOLLOWER</span></td>
+          <td><span>10</span></td>
+          <td><span class="badge bg-info">Purchased</span></td>
+          <td><span class="badge bg-success">Active</span></td>
+        </tr>
+        <tr>
+          <td><span>12/20/2024</span></td>
+          <td><span class="fw-bold">Emily Stone</span></td>
+          <td><span class="badge bg-purple">VIP</span></td>
+          <td><span>10</span></td>
+          <td><span class="badge bg-orange">Gift from
+              alex@example.com</span></td>
+          <td><span class="badge bg-success">Active</span></td>
+        </tr>
+        <tr>
+          <td><span>12/20/2024</span></td>
+          <td><span class="fw-bold">Emily Stone</span></td>
+          <td><span class="badge bg-success">FAN</span></td>
+          <td><span>10</span></td>
+          <td><span class="badge bg-success">Free Claim</span></td>
+          <td><span class="badge bg-lifted">Redeemed</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div> -->
+
+  <% 
+  function formatDate(dateString) {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', options); 
+} %>
+
+<div class="admin-table mt-20">
+ <div class="table-responsive">
+   <table class="align-middle text-nowrap">
+     <thead class="table-light">
+       <tr>
+         <th>Date</th>
+         <th>Product</th>
+         <th>Pack Type</th>
+         <th>Entries</th>
+         <th>Source</th>
+         <th>Status</th>
+       </tr>
+     </thead>
+     <tbody>
+        <% if (body?.myEntries && body.myEntries.length > 0) { 
+            body.myEntries.forEach(entries => {
+                if (entries?.productCategoryDetails?.length > 0) {
+                    entries.productCategoryDetails.forEach(productCategory => { 
+                        const type = productCategory?.productCategoryType?.toLowerCase();
+                        const color =
+                            type === "fan" ? "success" :
+                            type === "vip" ? "purple" :
+                            type === "follower" ? "warning" : "gray";
+        %>
+        <tr>
+            <td><span><%= formatDate(entries?.created_at) %></span></td>
+            <td><span class="fw-bold"><%= entries?.celebrities?.name || 'N/A' %></span></td>
+            <td><span class="badge bg-<%= color %>"><%= productCategory?.productCategoryType || '-' %></span></td>
+            <td><span class="fw-bold"><%= productCategory?.totalEntries || 0 %></span></td>
+            <td>
+                <% if (entries?.type === 2) { %>
+                    <span class="badge bg-info">Purchased</span>
+                <% } else if (entries?.type === 3) { %>
+                    <span class="badge bg-orange">Gift</span>
+                <% } else if (entries?.type === 1) { %>
+                    <span class="badge bg-success">Free Claim</span>
+                <% } else { %>
+                    <span class="badge bg-gray">-</span>
+                <% } %>
+            </td>
+            <td>
+                <% if (entries?.status === 1) { %>
+                    <span class="badge bg-success">Active</span>
+                <% } else if (entries?.status === 2) { %>
+                    <span class="badge bg-lifted">Redeemed</span>
+                <% } else { %>
+                    <span class="badge bg-warning">Pending</span>
+                <% } %>
+            </td>
+        </tr>
+              <% }) 
+              } }) 
+       } else { %>
+          <tr>
+            <td colspan="6" class="text-center">No productCategorys found</td>
+          </tr>
+       <% } %>
+       <tr>
+        <td><span>12/20/2024</span></td>
+        <td><span class="fw-bold">Emily Stone</span></td>
+        <td><span class="badge bg-warning">FOLLOWER</span></td>
+        <td><span>10</span></td>
+        <td><span class="badge bg-info">Purchased</span></td>
+        <td><span class="badge bg-success">Active</span></td>
+      </tr>
+      <tr>
+        <td><span>12/20/2024</span></td>
+        <td><span class="fw-bold">Emily Stone</span></td>
+        <td><span class="badge bg-purple">VIP</span></td>
+        <td><span>10</span></td>
+        <td><span class="badge bg-orange">Gift from
+            alex@example.com</span></td>
+        <td><span class="badge bg-success">Active</span></td>
+      </tr>
+      <tr>
+        <td><span>12/20/2024</span></td>
+        <td><span class="fw-bold">Emily Stone</span></td>
+        <td><span class="badge bg-success">FAN</span></td>
+        <td><span>10</span></td>
+        <td><span class="badge bg-success">Free Claim</span></td>
+        <td><span class="badge bg-lifted">Redeemed</span></td>
+      </tr>
+     </tbody>
+   </table>
+ </div>
+</div>

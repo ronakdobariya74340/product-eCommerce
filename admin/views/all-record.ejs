@@ -1,0 +1,74 @@
+<%- include("header") %>
+
+    <section class="content-area pb-5">
+          
+        <div class="list-filter d-flex justify-content-between align-items-center p-3 bg-white rounded-2 bs-border  mt-30 ">
+            <div class="filter-area">
+                <button class="filter-btn d-block d-lg-none" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    <i class="fas fa-filter fa-fw"></i> Filter
+                </button>
+                <div class="collapse d-lg-block" id="collapseExample">
+                    <div class="filter-area">
+                        <input type="hidden" id="startDate" name="startDate" />
+                        <input type="hidden" id="endDate" name="endDate" />
+                        <div class="dropdown filter-dropdown">
+                            <div class="filter-btn dropdown-toggle cursor-pointer" id="reportrange">
+                                <span class="fs-14 fw-md d-flex align-items-center gap-1">
+                                    July 3, 2025 - July 3, 2025
+                                </span>
+                            </div>
+                        </div>
+                        <% if(body?.productList.length> 0) { %>
+                            <div class="dropdown filter-dropdown">
+                                <select class="filter-btn" id="product_filter_btn">
+                                    <option value="">All Celebrities</option>
+                                    <% body?.productList.forEach((product, index)=> { %>
+                                        <option value="<%= product._id %>">
+                                            <%= product.name %>
+                                        </option>
+                                        <% }); %>
+                                </select>
+                            </div>
+                            <% } %>
+                                <button class="f-reset-btn fs-14 fw-md bg-transparent reset_btn_show" id="search_reset">
+                                    Reset <img src="/images/f-close.svg" alt="" />
+                                </button>
+                                <button class="search-btn text-white bg-black rounded-1 fs-14 search_btn_show"
+                                    id="search_option" style="display: none !important">
+                                    Search
+                                </button>
+                    </div>
+                </div>
+            </div>
+            <div class="download-btn d-flex align-items-center gap-2 justify-content-end">
+            <button class="btn btn-primary btn-green d-flex align-items-center gap-2" onclick="exportData('csv')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-download-icon lucide-download">
+                    <path d="M12 15V3" />
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <path d="m7 10 5 5 5-5" />
+                </svg>
+                Export CSV
+            </button>
+            <button class="btn btn-primary d-flex align-items-center gap-2" onclick="exportData('json')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-download-icon lucide-download">
+                    <path d="M12 15V3" />
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <path d="m7 10 5 5 5-5" />
+                </svg>
+                Export JSON
+            </button>
+        </div>
+            
+        </div>
+        <div class="mt-30">
+            <div id="table-data"></div>
+        </div>
+      
+    </section>
+
+    <%- include("footer") %>

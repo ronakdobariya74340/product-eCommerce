@@ -1,0 +1,102 @@
+<%
+    function formatDateTime(date) {
+        const d = new Date(date);
+        const day = ('0' + d.getDate()).slice(-2);
+        const month = ('0' + (d.getMonth() + 1)).slice(-2);
+        const year = d.getFullYear();
+        let hours = d.getHours();
+        const minutes = ('0' + d.getMinutes()).slice(-2);
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 0 should be 12
+        const hourStr = ('0' + hours).slice(-2);
+        return `${day}/${month}/${year} ${hourStr}:${minutes} ${ampm}`;
+    }
+%> 
+
+<div class="admin-table mt-30">
+    <div class="table-responsive">
+      <table class="align-middle text-nowrap">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Payment ID</th>
+            <th>User Name</th>
+            <th>Product Name</th>
+            <th>Product Category</th>
+            <th>Type</th>
+            <th>Total Entries</th>
+            <th>Total Coast</th>
+            <th>Method</th>
+            <th>Status</th>
+            <th>Payment Date</th>
+            <!-- <th class="text-end">Action</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <% if (body?.totalTransaction !== undefined && body?.totalTransaction > 0) {
+            body?.transactionList.forEach((txn, index) => {
+              let start_index = (parseInt(body?.param?.currentPage) - 1) * parseInt(body?.param?.itemPerPage) + index + 1;
+          %>
+            <tr 
+              data-txn-id="<%- txn?._id %>" 
+              data-user-id="<%- txn?.userId %>"
+              data-status="<%- txn?.status %>"
+            >
+              <td><%- start_index %></td>
+              <td><%- txn?._id || '—' %></td>
+              <td><%- txn?.userDetails?.userName || '—' %></td>
+              <td><%- txn?.productDetails?.name || '—' %></td>
+              <td>
+                <% if (txn?.productCategoryDetails && txn.productCategoryDetails.length > 0) { %>
+                  <% txn.productCategoryDetails.forEach((productCategory, idx) => { %>
+                    <%= productCategory.name %><% if (idx !== txn.productCategoryDetails.length - 1) { %>, <% } %>
+                  <% }) %>
+                <% } else { %>
+                  <%=  txn.productCategoryDetails %>
+                <% } %>
+              </td>
+              
+              <td>
+                <% if (txn?.type === 1) { %>
+                  Free
+                <% } else if (txn?.type === 2) { %>
+                  Paid
+                <% } else if (txn?.type === 3) { %>
+                  Gift
+                <% } else { %>
+                  —
+                <% } %>
+              </td>
+              <td><%- txn?.totalEntries %></td>
+              <td>$<%- txn?.totalCost %></td>
+              <td>
+                <% if (txn?.paymentMethod === 1) { %>
+                  Stripe
+                <% } else if (txn?.paymentMethod === 2) { %>
+                  PayPal
+                <% } else if(txn?.paymentMethod === 3) { %> 
+                  Stripe
+                  <%}%>
+              </td>
+              <td>
+                <% if (txn?.status === 1) { %>
+                  <span class="badge bg-warning">Pending</span>
+                <% } else if (txn?.status === 2) { %>
+                  <span class="badge bg-success">success</span>
+                <% } else if (txn?.status === 3) { %>
+                  <span class="badge bg-danger">Failed</span>
+                <% } %>
+              </td>
+              <td><%= txn?.created_at ? formatDateTime(txn?.created_at) : 'N/A' %></td>
+            </tr>
+          <% }); } else { %>
+            <tr>
+              <td colspan="9" class="text-center text-muted">No transactions found</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  

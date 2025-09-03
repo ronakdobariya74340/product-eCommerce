@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>MDF | Admin Panel</title>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <link rel='icon' type='image/x-icon' href='/images/favicon.ico' />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Sora:wght@100..800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/all.min.css" />
+        <link rel="stylesheet" href="/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/css/jquery.fancybox.min.css">
+        <link rel="stylesheet" href="/css/style.css"/>
+        <link rel="stylesheet" href="/css/responsive.css"/>
+    </head>
+    <body>
+        <div class="preloader">
+            <div class="loading"><svg viewBox="0 0 84 24" fill="#3BC117"><circle cx="18" cy="12" r="6"></circle><circle cx="18" cy="12" r="6"></circle><circle cx="42" cy="12" r="6"></circle><circle cx="66" cy="12" r="6"></circle></svg></div>
+        </div>
+        <main class="d-flex main-content">
+            <nav class="navbar-vertical bg-white d-flex justify-content-start flex-column top-0 vh-100 position-sticky" id="navbar">
+                <div class="sidebar-close d-inline-block d-lg-none">
+                    <i class="fa-solid fa-xmark rounded-2 cursor-pointer d-flex justify-content-center align-items-center" id="close-navbar"></i>
+                </div>
+                <div class="company-admin-info bg-white">
+                    <a href="/admin/dashboard" class="navbar-brand text-center cursor-pointer">
+                        <div class="company-logo d-flex justify-content-center align-items-center">
+                            <img src="/images/logo.svg" alt="logo">
+                        </div>
+                    </a>
+                </div>
+                <%- include("sidebar") %>
+                <div class="water-mark text-center">    
+                    <%- header?.admin?.name?.toUpperCase() %>
+                </div>
+            </nav>
+            <!-- Page Content =========== -->
+            <div class="page-content w-100">
+                <header class="d-flex align-items-center justify-content-between position-sticky mb-30 top-0 bg-white z-3">
+                  <div class="d-flex d-lg-none menu-bars align-items-center justify-content-center cursor-pointer rounded-2" id="sidebarToggle">
+                    <i class="fa-solid fa-bars"></i>
+                  </div>
+
+                  <div class="page-name"><%- header?.title %></div>
+              
+                  <ul class="list-unstyled ms-auto d-flex align-items-center gap-3 right-nav-bar mb-0">
+                    <li class="d-flex align-items-center gap-2">
+                      <div class="user-avatar text-white"><%= header?.admin?.name ? header?.admin?.name.charAt(0).toUpperCase() : "-" %></div>
+                      <div class="user-name-info">
+                        <div class="u-name fs-14 fw-md"><%- header?.admin?.name %></div>
+                        <div class="u-email fs-12 fw-normal"><%- header?.admin?.email %></div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="log-out-btn" type="button" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                        <a href="javascript:void(0);"><img src="/images/logout.svg" alt=""></a>
+                      </div>
+                    </li>
+                  </ul>
+                </header>
+              

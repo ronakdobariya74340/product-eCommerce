@@ -1,0 +1,64 @@
+<div class="admin-table mt-30">
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (body?.totalProductCategory !== undefined && body?.totalProductCategory > 0) { body?.productCategoryList.forEach((productCategory, index) => { let start_index = (parseInt(body?.param?.currentPage) - 1) * parseInt(body?.param?.itemPerPage) + index + 1; %>
+                    <tr>
+                        <td><%= start_index %></td>
+                        <td class="text-black fw-bold text-uppercase"><%= productCategory?.name %></td>
+                        <td>
+                            <% if (productCategory?.status === 1) { %>
+                                <span class="badge bg-danger">Inactive</span>
+                            <% } else if (productCategory?.status === 2) { %>
+                                <span class="badge bg-success">Active</span>
+                            <% } %>
+                        </td>
+                        <td><%= productCategory?.readable_created_at %></td>
+                        <td class="text-end">
+                            <a href="javascript:void(0);" data-product-category-id="<%= productCategory?.id %>" data-bs-toggle="modal" data-bs-target="#addProductCategoryModal" class="edit-product-category c-tooltip table-tooltip data-edit me-1" tooltip-text="Edit">
+                                <svg width="36" height="37" viewBox="0 0 36 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="0.5" y="1" width="35" height="35" rx="6.5" fill="white"/>
+                                    <rect x="0.5" y="1" width="35" height="35" rx="6.5" stroke="#7E8B95"/>
+                                    <path d="M10.668 25.8333H14.3346L23.9596 16.2083C24.2004 15.9675 24.3914 15.6817 24.5217 15.3671C24.652 15.0526 24.719 14.7154 24.719 14.375C24.719 14.0345 24.652 13.6973 24.5217 13.3828C24.3914 13.0682 24.2004 12.7824 23.9596 12.5416C23.7189 12.3009 23.4331 12.1099 23.1185 11.9796C22.8039 11.8493 22.4668 11.7822 22.1263 11.7822C21.7858 11.7822 21.4487 11.8493 21.1341 11.9796C20.8195 12.1099 20.5337 12.3009 20.293 12.5416L10.668 22.1666V25.8333Z" stroke="#7E8B95" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M19.375 13.458L23.0417 17.1247" stroke="#7E8B95" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </a>
+                            <a href="javascript:void(0);" data-id="<%= productCategory?.id %>"  class="delete_product_category c-tooltip table-tooltip" tooltip-text="Delete" >
+                                <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="0.5" y="0.5" width="35" height="35" rx="6.5" fill="white"/>
+                                    <rect x="0.5" y="0.5" width="35" height="35" rx="6.5" stroke="#CE2B30"/>
+                                    <g clip-path="url(#clip0)">
+                                    <path d="M10.6641 13.417H25.3307" stroke="#CE2B30" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M16.1641 17.083V22.583" stroke="#CE2B30" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M19.8359 17.083V22.583" stroke="#CE2B30" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M11.5859 13.417L12.5026 24.417C12.5026 24.9032 12.6958 25.3695 13.0396 25.7134C13.3834 26.0572 13.8497 26.2503 14.3359 26.2503H21.6693C22.1555 26.2503 22.6218 26.0572 22.9656 25.7134C23.3094 25.3695 23.5026 24.9032 23.5026 24.417L24.4193 13.417" stroke="#CE2B30" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M15.25 13.4167V10.6667C15.25 10.4236 15.3466 10.1904 15.5185 10.0185C15.6904 9.84658 15.9236 9.75 16.1667 9.75H19.8333C20.0764 9.75 20.3096 9.84658 20.4815 10.0185C20.6534 10.1904 20.75 10.4236 20.75 10.6667V13.4167" stroke="#CE2B30" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </g>
+                                    <defs>
+                                    <clipPath id="clip0"><rect width="22" height="22" fill="white" transform="translate(7 7)"/></clipPath>
+                                    </defs>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                <% }) } else { %>
+                    <tr>
+                    <td colspan="6" class="text-center">
+                        No product category found
+                    </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+  </div>
+  

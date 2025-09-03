@@ -1,0 +1,154 @@
+<% function formatNumberWithCommas(x) { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," ); }; function
+    formatUSD(amount) { return '$' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "," ); }; %>
+    <div class="row gy-4">
+        <div class="col-xxl-2 col-xl-4 col-md-6 col-12 custom-space user-managment">
+            <div class="static-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="static-data">
+                        <span class="sd-title fs-14 d-block">Total Users</span>
+                        <span class="sd-data" id="total-users">
+                            <%= body?.totalUsers %>
+                        </span>
+                    </div>
+                    <div class="sc-img">
+                        <img src="/images/user.svg" alt="bot">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xxl-2 col-xl-4 col-md-6 col-12 custom-space user-managment">
+            <div class="static-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="static-data">
+                        <span class="sd-title fs-14 d-block">Free Entries</span>
+                        <span class="sd-data" id="free-entries">
+                            <%= body?.totalFreeEntries %>
+                        </span>
+                    </div>
+                    <div class="sc-img">
+                        <img src="/images/free.svg" alt="bot">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xxl-2 col-xl-4 col-md-6 col-12 custom-space user-managment">
+            <div class="static-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="static-data">
+                        <span class="sd-title fs-14 d-block">Paid Entries</span>
+                        <span class="sd-data" id="paid-entries">
+                            <%= body?.paidEntries %>
+                        </span>
+                    </div>
+                    <div class="sc-img">
+                        <img src="/images/redeem.svg" alt="bot">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xxl-2 col-xl-4 col-md-6 col-12 custom-space user-managment">
+            <div class="static-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="static-data">
+                        <span class="sd-title fs-14 d-block">Gift Entries</span>
+                        <span class="sd-data" id="gift-entries">
+                            <%= body?.totalGiftEntries %>
+                        </span>
+                    </div>
+                    <div class="sc-img">
+                        <img src="/images/gift-send.svg" alt="bot">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xxl-2 col-xl-4 col-md-6 col-12 custom-space user-managment">
+            <div class="static-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="static-data">
+                        <span class="sd-title fs-14 d-block">Total Entries</span>
+                        <span class="sd-data" id="total-entries">
+                            <%= body?.totalEntries %>
+                        </span>
+                    </div>
+                    <div class="sc-img">
+                        <img src="/images/table.svg" alt="bot">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xxl-2 col-xl-4 col-md-6 col-12 custom-space user-managment">
+            <div class="static-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="static-data">
+                        <span class="sd-title fs-14 d-block">Total Revenue (USD)</span>
+                        <span class="sd-data" id="total-revenue">
+                            $<%= body?.totalRevenue %>
+                        </span>
+                    </div>
+                    <div class="sc-img">
+                        <img src="/images/dollor.svg" alt="bot">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="admin-table">
+                <div id="table-data">
+                    <div class="table-responsive">
+                        <table id="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="60px">#</th>
+                                    <th>Product</th>
+                                    <th>Users</th>
+                                    <th>Free</th>
+                                    <th>Paid</th>
+                                    <th>Gift</th>
+                                    <th>Total Entries</th>
+                                    <th>Revenue (USD)</th>
+                                    <th>Avg/User (USD)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if(body?.totalRecord !==undefined && body?.totalRecord> 0) {
+                                    body?.recordList.forEach((record, index)=> { let start_index =
+                                    (parseInt(body?.param?.currentPage) - 1) * parseInt(body?.param?.itemPerPage) +
+                                    index + 1; %>
+                                    <tr>
+                                        <td>
+                                            <%= start_index %>
+                                        </td>
+                                        <td>
+                                            <%= record?.productName %>
+                                        </td>
+                                        <td>
+                                            <%= record?.users %>
+                                        </td>
+                                        <td>
+                                            <%= record?.free %>
+                                        </td>
+                                        <td>
+                                            <%= record?.paid %>
+                                        </td>
+                                        <td>
+                                            <%= record?.gift %>
+                                        </td>
+                                        <td>
+                                            <%= record?.totalEntries %>
+                                        </td>
+                                        <td><span class="text-green">$<%= record?.revenue %></span></td>
+                                        <td>$<%= record?.avgPerUser %>
+                                        </td>
+                                    </tr>
+                                    <% }); } else { %>
+                                        <tr>
+                                            <td colspan="9" class="text-center text-muted">No record found</td>
+                                        </tr>
+                                        <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

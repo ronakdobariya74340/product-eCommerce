@@ -1,0 +1,1647 @@
+<%- include("header.ejs") %>
+<%
+    function formatDate(dateString) {
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }
+        const date = new Date(dateString)
+        return date.toLocaleDateString('en-GB', options)
+    };
+%>
+<input type="hidden" name="id" id="userId" value="<%= body?.user._id %>" />
+<div class="content-area pb-5">
+  <div class="user-access-container">
+    <div class="user-info-line">
+      <div class="d-flex align-items-sm-end flex-sm-row flex-column gap-3">
+        <div>
+          <div class="back-btn">
+            <a href="/admin/user-management">
+              <svg width="4" height="8" viewBox="0 0 4 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.5 1L0.5 4L3.5 7" stroke="#171D25" stroke-linecap="round" stroke-linejoin="round">
+                </path>
+              </svg>
+              Back
+            </a>
+          </div>
+          <div class="mt-3 d-flex align-items-center gap-4">
+            <h3 class="fw-bold mb-1">
+              <%= body?.user?.userName %>
+            </h3>
+            <div class="status-btn-wrapper">
+              <% if (body?.user?.status===2) { %>
+              <span class="badge bg-success">Active</span>
+              <% } else if (body?.user?.status===3) { %>
+              <span class="badge bg-danger">Suspended</span>
+              <% } else if (body?.user?.status===1) { %>
+              <span class="badge bg-warning">Pending</span>
+              <% } %>
+
+              <span class="<%- body?.user?.google2faStatus === 1 ? 'badge bg-success' : 'badge bg-danger' %>">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check h-3 w-3 mr-1">
+                  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
+                  </path>
+                  <path d="m9 12 2 2 4-4"></path>
+                </svg>
+
+                2FA <%- body?.user?.google2faStatus===1 ? 'Enabled' : 'Disabled' %>
+              </span>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="action-buttons">
+          <button class="btn reset-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-off h-4 w-4 mr-2">
+              <path d="m2 2 20 20"></path>
+              <path d="M5 5a1 1 0 0 0-1 1v7c0 5 3.5 7.5 7.67 8.94a1 1 0 0 0 .67.01c2.35-.82 4.48-1.97 5.9-3.71">
+              </path>
+              <path d="M9.309 3.652A12.252 12.252 0 0 0 11.24 2.28a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1v7a9.784 9.784 0 0 1-.08 1.264">
+              </path>
+            </svg>
+            Reset 2FA
+          </button>
+          <% if(body?.user?.status===3){%>
+            <button class="btn unsuspend-btn" data-bs-toggle="modal" data-bs-target="#user-unsuspend-modal" data-user-id="<%= body?.user?._id?.toString() %>">
+             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.666 7.33333L11.9993 8.66667L14.666 6" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10.6673 14V12.6667C10.6673 11.9594 10.3864 11.2811 9.88627 10.781C9.38617 10.281 8.70789 10 8.00065 10H4.00065C3.29341 10 2.61513 10.281 2.11503 10.781C1.61494 11.2811 1.33398 11.9594 1.33398 12.6667V14" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M6.00065 7.33333C7.47341 7.33333 8.66732 6.13943 8.66732 4.66667C8.66732 3.19391 7.47341 2 6.00065 2C4.52789 2 3.33398 3.19391 3.33398 4.66667C3.33398 6.13943 4.52789 7.33333 6.00065 7.33333Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+              Unsuspend user
+            </button>
+          <% } else {%>
+          <button class="btn suspend-btn" data-bs-toggle="modal" data-bs-target="#user-suspend-modal" data-user-id="<%= body?.user?._id?.toString() %>">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13.1666 12.0133C13.1666 13.6167 12.2786 14.5 10.6666 14.5H5.33323C5.09309 14.5022 4.85344 14.478 4.61856 14.428C4.55294 14.4154 4.49051 14.3897 4.43497 14.3526C4.37943 14.3154 4.33191 14.2675 4.2952 14.2116C4.2585 14.1558 4.23336 14.0931 4.22128 14.0274C4.20919 13.9617 4.21041 13.8942 4.22485 13.829C4.23929 13.7637 4.26666 13.702 4.30535 13.6475C4.34404 13.593 4.39326 13.5469 4.4501 13.5117C4.50694 13.4766 4.57025 13.4532 4.63628 13.4429C4.70232 13.4327 4.76974 13.4358 4.83456 13.452C4.99862 13.4856 5.16578 13.5017 5.33323 13.5H10.6666C11.7179 13.5 12.1666 13.0553 12.1666 12.0133C12.2179 11.3428 12.011 10.678 11.5883 10.155C11.1656 9.63204 10.5589 9.29039 9.89256 9.2C9.82608 9.19296 9.76169 9.17267 9.70319 9.14031C9.64469 9.10795 9.59327 9.06419 9.55198 9.01161C9.51069 8.95904 9.48036 8.89872 9.46278 8.83421C9.44521 8.76971 9.44075 8.70234 9.44967 8.63609C9.45858 8.56983 9.4807 8.50604 9.5147 8.44848C9.5487 8.39092 9.5939 8.34076 9.64762 8.30097C9.70135 8.26119 9.76251 8.23257 9.82748 8.21684C9.89245 8.2011 9.95992 8.19854 10.0259 8.20933C10.9338 8.32771 11.763 8.78624 12.346 9.49232C12.9289 10.1984 13.2222 11.0994 13.1666 12.0133ZM14.3532 2.35333L1.68656 15.02C1.59178 15.1083 1.46642 15.1564 1.33688 15.1541C1.20735 15.1518 1.08376 15.0994 0.99215 15.0077C0.900541 14.9161 0.848067 14.7926 0.845781 14.663C0.843496 14.5335 0.891578 14.4081 0.979898 14.3133L2.87456 12.418C2.85234 12.2841 2.83854 12.149 2.83323 12.0133C2.83323 10.2387 3.83723 8.16667 6.66656 8.16667H7.1259L8.1399 7.15333C8.09456 7.15333 8.0519 7.16667 8.00656 7.16667C7.44618 7.16667 6.89839 7.0005 6.43245 6.68917C5.96651 6.37783 5.60335 5.93533 5.38891 5.4176C5.17446 4.89988 5.11835 4.33019 5.22767 3.78058C5.337 3.23097 5.60685 2.72611 6.0031 2.32987C6.39934 1.93362 6.9042 1.66377 7.45381 1.55444C8.00342 1.44512 8.57311 1.50123 9.09083 1.71568C9.60856 1.93012 10.0511 2.29328 10.3624 2.75922C10.6737 3.22516 10.8399 3.77295 10.8399 4.33333C10.8399 4.37933 10.8286 4.422 10.8266 4.46667L13.6466 1.64667C13.7413 1.55835 13.8667 1.51027 13.9962 1.51255C14.1258 1.51484 14.2494 1.56731 14.341 1.65892C14.4326 1.75053 14.4851 1.87412 14.4873 2.00365C14.4896 2.13319 14.4416 2.25855 14.3532 2.35333ZM8.0059 6.16667C8.3685 6.16667 8.72295 6.05914 9.02444 5.8577C9.32593 5.65625 9.56092 5.36992 9.69968 5.03492C9.83844 4.69992 9.87474 4.3313 9.804 3.97567C9.73326 3.62004 9.55866 3.29337 9.30226 3.03697C9.04586 2.78058 8.7192 2.60597 8.36356 2.53523C8.00793 2.46449 7.63931 2.50079 7.30431 2.63956C6.96931 2.77832 6.68299 3.0133 6.48154 3.31479C6.28009 3.61628 6.17256 3.97074 6.17256 4.33333C6.17309 4.8194 6.36642 5.28541 6.71012 5.62911C7.05382 5.97281 7.51983 6.16614 8.0059 6.16667ZM3.8859 11.4073L6.08123 9.212C5.51919 9.27107 4.99447 9.52135 4.59486 9.92096C4.19524 10.3206 3.94497 10.8453 3.8859 11.4073Z" fill="currentColor" />
+            </svg>
+            Suspend user
+          </button>
+          <%}%>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="">
+            <div class="user-info-line">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="status-btn-wrapper">
+                        <button class="active">Active</button>
+                        <button class="enabled">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check h-3 w-3 mr-1">
+                            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
+                            <path d="m9 12 2 2 4-4"></path>
+                            </svg>
+                            2FA Enabled
+                        </button>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                <button class="btn reset-btn">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-off h-4 w-4 mr-2">
+                <path d="m2 2 20 20"></path>
+                <path d="M5 5a1 1 0 0 0-1 1v7c0 5 3.5 7.5 7.67 8.94a1 1 0 0 0 .67.01c2.35-.82 4.48-1.97 5.9-3.71"></path>
+                <path d="M9.309 3.652A12.252 12.252 0 0 0 11.24 2.28a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1v7a9.784 9.784 0 0 1-.08 1.264"></path>
+                </svg>
+                    Reset 2FA
+                </button>
+                <button class="btn suspend-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 3H11V13H13V3ZM18.83 5.17L17.41 6.59C18.99 7.86 20 9.81 20 12C20 15.87 16.87 19 13 19C9.13 19 6 15.87 6 12C6 9.81 7.01 7.86 8.58 6.58L7.17 5.17C5.23 6.82 4 9.26 4 12C4 16.97 8.03 21 13 21C17.97 21 22 16.97 22 12C22 9.26 20.77 6.82 18.83 5.17Z" fill="currentColor"/>
+                    </svg>
+                    Suspend User
+                </button>
+                </div>
+            </div>
+        </div> -->
+  </div>
+  <div class="details-wrapper">
+    <div class="row">
+      <div class="col-12 detail-right">
+        <div class="tab-item-group mt-15">
+          <div class="nav stream-nav d-flex" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <button class="nav-link st-nav-link active" id="account-info-tab" data-bs-toggle="pill" data-bs-target="#account-info" type="button" role="tab" aria-controls="account-info" aria-selected="true" tabindex="-1">
+              <span>
+                Account Info
+              </span>
+            </button>
+            <button class="nav-link st-nav-link" id="celeb-limit-tab" data-bs-toggle="pill" data-bs-target="#celeb-limit" type="button" role="tab" aria-controls="celeb-limit" aria-selected="true" tabindex="-1">
+              <span>
+                Product Limits
+              </span>
+            </button>
+            <button class="nav-link st-nav-link" id="sb-transaction-listing-tab" data-bs-toggle="pill" data-bs-target="#transaction-list-tab" type="button" role="tab" aria-controls="transaction-list-tab" aria-selected="false" tabindex="-1">
+              <span>
+                Transactions
+              </span>
+            </button>
+
+            <button class="nav-link st-nav-link" id="my-limit-tab" data-bs-toggle="pill" data-bs-target="#my-limit" type="button" role="tab" aria-controls="my-limit" aria-selected="true" tabindex="-1">
+              <span>
+                My Entries
+              </span>
+            </button>
+
+
+            <button class="nav-link st-nav-link" id="sb-gift-card-tab" data-bs-toggle="pill" data-bs-target="#gift-card-list-tab" type="button" role="tab" aria-controls="gift-card-list-tab" aria-selected="false" tabindex="-1">
+              <span>
+                Gift Cards
+              </span>
+            </button>
+            <button class="nav-link st-nav-link" id="sb-redeemed-tab" data-bs-toggle="pill" data-bs-target="#redeemed-list-tab" type="button" role="tab" aria-controls="redeemed-list-tab" aria-selected="false" tabindex="-1">
+              <span>Redeemed</span>
+            </button>
+            <button class="nav-link st-nav-link" id="contes-tab" data-bs-toggle="pill" data-bs-target="#contest" type="button" role="tab" aria-controls="contest-tab"  aria-selected="false" tabindex="-1">
+                <span>Contests</span>
+            </button>
+            <button class="nav-link st-nav-link" id="sb-suspension-history-tab" data-bs-toggle="pill" data-bs-target="#sb-suspension-history" type="button" role="tab" aria-controls="sb-suspension-history" aria-selected="false" tabindex="-1">
+              <span>
+                Suspensions
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div class="tab-content mt-15" id="v-pills-tabContent">
+          <!-- Account Info -->
+          <div class="tab-pane fade  show active" id="account-info" role="tabpanel" aria-labelledby="account-info-tab">
+            <div class="user-data-show">
+              <div class="user-info-part mb-3">
+                <h5>Personal Information</h5>
+                <div class="row gy-lg-4 gy-3">
+                  <div class="col-lg-3">
+                    <label for="">Full Name</label>
+                    <span>
+                      <%= body?.user?.userName %>
+                    </span>
+                  </div>
+                  <div class="col-lg-3">
+                    <label for="">Email Address</label>
+                    <span>
+                      <%= body?.user?.email %>
+                      <svg class="ms-1" width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7" cy="8" r="5" fill="white"></circle>
+                        <path d="M14.4523 6.66766L13.1079 5.32141V4.24766C13.1076 3.75174 12.9106 3.27619 12.5602 2.92529C12.2097 2.57439 11.7344 2.37677 11.2385 2.37578H10.166L8.82165 1.03016C8.11477 0.323281 6.88352 0.323281 6.17727 1.03016L4.8329 2.37578H3.7604C3.26443 2.37661 2.78905 2.57417 2.43858 2.92511C2.08811 3.27604 1.89119 3.75169 1.89102 4.24766V5.32141L0.546021 6.66766C0.196305 7.01933 0 7.49513 0 7.99109C0 8.48706 0.196305 8.96286 0.546021 9.31453L1.8904 10.6608V11.7345C1.89073 12.2305 2.0877 12.706 2.43814 13.0569C2.78857 13.4078 3.26385 13.6054 3.75977 13.6064H4.83227L6.17665 14.952C6.52977 15.3052 6.99977 15.5002 7.49915 15.5002C7.99852 15.5002 8.4679 15.3052 8.82102 14.952L10.1654 13.6064H11.2379C11.7339 13.6056 12.2092 13.408 12.5597 13.0571C12.9102 12.7061 13.1071 12.2305 13.1073 11.7345V10.6608L14.4523 9.31453C14.802 8.96286 14.9983 8.48706 14.9983 7.99109C14.9983 7.49513 14.802 7.01933 14.4523 6.66766ZM11.376 6.88203L8.21727 10.0039C7.83352 10.3852 7.3279 10.5764 6.8229 10.5764C6.3179 10.5764 5.81477 10.3858 5.42977 10.0058L3.8054 8.44391C3.74708 8.38613 3.70072 8.31742 3.66895 8.24172C3.63719 8.16602 3.62065 8.08481 3.62027 8.00272C3.61989 7.92062 3.63569 7.83926 3.66675 7.76327C3.69782 7.68728 3.74355 7.61816 3.80133 7.55984C3.85911 7.50153 3.92782 7.45517 4.00352 7.4234C4.07922 7.39164 4.16043 7.37509 4.24252 7.37472C4.32462 7.37434 4.40598 7.39014 4.48197 7.4212C4.55796 7.45227 4.62708 7.498 4.6854 7.55578L6.30915 9.11703C6.446 9.25215 6.63058 9.32791 6.8229 9.32791C7.01521 9.32791 7.19979 9.25215 7.33665 9.11703L10.496 5.99453C10.6138 5.87784 10.7731 5.81271 10.9389 5.81347C11.1047 5.81423 11.2634 5.88082 11.3801 5.99859C11.4968 6.11637 11.5619 6.27567 11.5611 6.44147C11.5604 6.60726 11.4938 6.76534 11.376 6.88203Z" fill="#00994C"></path>
+                      </svg>
+                    </span>
+                  </div>
+                  <div class="col-lg-3">
+                    <label for="">Country</label>
+                    <span>
+                      <%= body?.user?.country || "---" %>
+                    </span>
+                  </div>
+                  <div class="col-lg-3">
+                    <label for="">Age</label>
+                    <span>
+                      <%= body?.user?.age || "---" %>
+                    </span>
+                  </div>
+                  <div class="col-lg-3">
+                    <label for="">Mailing Address</label>
+                    <span>
+                      <%= body?.user?.address || "---" %>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="user-info-part">
+                <h5>Activity Summary</h5>
+                <div class="row gy-lg-4 gy-3">
+                  <div class="col-lg-3">
+                    <label for="">Total Entries</label>
+                    <span class="fs-md-3 fs-4 fw-semibold">0</span>
+                    <!-- <span class="fs-md-3 fs-4 fw-semibold"><%- body?.totalEntries %></span> -->
+                  </div>
+                  <div class="col-lg-3">
+                    <label for="">Total Spent (USD) </label>
+                    <!-- <span class="fs-md-3 fs-4 fw-semibold">$<%- body?.totalSpent %></span> -->
+                    <span class="fs-md-3 fs-4 fw-semibold">$0</span>
+                  </div>
+                  <div class="col-lg-3">
+                    <label for="">Member Since</label>
+                    <span class="fs-md-3 fs-4 fw-semibold">
+                      <%= new Date(body?.user.created_at).toLocaleDateString('en-IN') %>
+                    </span>
+                  </div>
+                  <div class="col-lg-3">
+                    <label for="">Last Login</label>
+                    <span class="fs-md-3 fs-4 fw-semibold">
+                      <%= new Date(body?.lastLoginDate).toLocaleDateString('en-IN') %>
+                    </span>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Product Limits -->
+          <div class="tab-pane fade" id="celeb-limit" role="tabpanel" aria-labelledby="celeb-limit-tab">
+            <div class="pb-3">
+              <div class="row gy-4">
+                <div class="col-xl-4 col-md-6">
+                  <div class="static-card bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="static-data">
+                        <span class="sd-title fs-14 d-block">Total Spent on
+                          Celebrities</span>
+                        <!-- <span class="sd-data">$<%= body?.totalSpent || 0 %></span> -->
+                        <span class="sd-data">$0</span>
+                      </div>
+                      <div class="sc-img">
+                        <img src="/images/dollor.svg" alt="bot">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-4 col-md-6">
+                  <div class="static-card bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="static-data">
+                        <span class="sd-title fs-14 d-block">Total Paid Plans</span>
+                        <!-- <span class="sd-data"><%= body?.totalPaidPlan %></span> -->
+                        <span class="sd-data">0</span>
+                      </div>
+                      <div class="sc-img">
+                        <img src="/images/redeem.svg" alt="bot">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-4 col-md-6">
+                  <div class="static-card bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="static-data">
+                        <span class="sd-title fs-14 d-block">Total Entries</span>
+                        <!-- <span class="sd-data"><%- body?.totalEntries %></span> -->
+                        <span class="sd-data">0</span>
+                      </div>
+                      <div class="sc-img">
+                        <img src="/images/user.svg" alt="bot">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="admin-table mt-3">
+              <div class="table-responsive">
+                <table class="align-middle text-nowrap">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Product</th>
+                      <th class="px-4">Paid Plans Usage</th>
+                      <th class="px-4">Entries Usage</th>
+                      <th>Total Spent</th>
+                      <th>Free Plan Claim</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+        <!-- <% if(body?.productDetails.length) { body?.productDetails.forEach((product) => { %>
+                    <tr>
+                        <td><span class="fw-semibold text-black"><%= product.name %></span></td>
+                    
+                        <td class="px-4">
+                        <div class="d-flex justify-content-between">
+                            <span class="text-danger fw-medium fs-14"><%= product.entriesText %></span>
+                            <span class="text-secondary fs-12"><%= product.entriesPercent %>%</span>
+                        </div>
+                        <div class="progress" role="progressbar">
+                            <div class="progress-bar bg-black" style="width: <%= product.entriesPercent %>%"></div>
+                        </div>
+                        </td>
+                    
+                        <td class="px-4">
+                        <div class="d-flex justify-content-between">
+                            <span class="text-warning fw-medium fs-14"><%= product.submissionsText %></span>
+                            <span class="text-secondary fs-12"><%= product.submissionsPercent %>%</span>
+                        </div>
+                        <div class="progress" role="progressbar">
+                            <div class="progress-bar bg-black" style="width: <%= product.submissionsPercent %>%"></div>
+                        </div>
+                        </td>
+                    
+                        <td><span class="fw-bold text-black">$<%= product.totalCost %></span></td>
+                    
+                        <td><span class="text-warning"><%= product.usage %></span></td>
+                    
+                        <td>
+                        <span class="badge <%= product.status === 'Limit Reached' ? 'bg-danger' : 'bg-success' %> btn-sm">
+                            <%= product.status %>
+                        </span>
+                        </td>
+                    </tr>
+                    <% })} %> -->
+                    <tr>
+                      <td><span class="fw-semibold text-black">Taylor Swift</span></td>
+                      <td class="px-4">
+                        <div class="d-flex justify-content-between">
+                          <span class="text-danger fw-medium fs-14">10/10</span>
+                          <span class="text-secondary fs-12">50%</span>
+                        </div>
+                        <div class="progress" role="progressbar">
+                          <div class="progress-bar bg-black" style="width: 50%"></div>
+                        </div>
+                      </td>
+                      <td class="px-4">
+                        <div class="d-flex justify-content-between">
+                          <span class="text-warning fw-medium fs-14">35/50</span>
+                          <span class="text-secondary fs-12">70%</span>
+                        </div>
+                        <div class="progress" role="progressbar">
+                          <div class="progress-bar bg-black" style="width: 70%"></div>
+                        </div>
+                      </td>
+                      <td><span class="fw-bold text-black">$200</span></td>
+                      <td><span class="text-black">2/3</span></td>
+                      <td><span class="badge bg-danger btn-sm">Limit Reached</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="fw-semibold text-black">Drake</span></td>
+                      <td class="px-4">
+                        <div class="d-flex justify-content-between">
+                          <span class="text-danger fw-medium fs-14">12/15</span>
+                          <span class="text-secondary fs-12">80%</span>
+                        </div>
+                        <div class="progress" role="progressbar">
+                          <div class="progress-bar bg-black" style="width: 80%"></div>
+                        </div>
+                      </td>
+                      <td class="px-4">
+                        <div class="d-flex justify-content-between">
+                          <span class="text-danger fw-medium fs-14">75/75</span>
+                          <span class="text-secondary fs-12">100%</span>
+                        </div>
+                        <div class="progress" role="progressbar">
+                          <div class="progress-bar bg-black" style="width: 100%">
+                          </div>
+                        </div>
+                      </td>
+                      <td><span class="fw-bold text-black">$200</span></td>
+                      <td><span class="text-black">1/3</span></td>
+                      <td><span class="badge bg-warning btn-sm">High Usage</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="fw-semibold text-black">Ariana Grande</span></td>
+                      <td class="px-4">
+                        <div class="d-flex justify-content-between">
+                          <span class="text-success fw-medium fs-14">3/8</span>
+                          <span class="text-secondary fs-12">38%</span>
+                        </div>
+                        <div class="progress" role="progressbar">
+                          <div class="progress-bar bg-black" style="width: 38%"></div>
+                        </div>
+                      </td>
+                      <td class="px-4">
+                        <div class="d-flex justify-content-between">
+                          <span class="text-success fw-medium fs-14">15/40</span>
+                          <span class="text-secondary fs-12">100%</span>
+                        </div>
+                        <div class="progress" role="progressbar">
+                          <div class="progress-bar bg-black" style="width: 100%">
+                          </div>
+                        </div>
+                      </td>
+                      <td><span class="fw-bold text-black">$200</span></td>
+                      <td><span class="text-danger">3/3</span></td>
+                      <td><span class="badge bg-success btn-sm">Normal</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- My entries -->
+          <div class="tab-pane fade" id="my-limit" role="tabpanel" aria-labelledby="my-limit-tab">
+            <div class="user-info-part mb-3">
+              <div class="list-filter p-3 bg-white rounded-2 bs-border d-flex align-items-center justify-content-between">
+                <div class="filter-area">
+                  <div class="dropdown filter-dropdown">
+                    <button id="status-filter-btn" class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <span class="fs-14 fw-md d-flex align-items-center gap-1">
+                        <img src="/images/circle-plus.svg" alt="" />Source
+                      </span>
+                      <div class="hr-line-sm"></div>
+                      <div class="filter-data"></div>
+                    </button>
+                    <ul class="dropdown-menu filter-dropdown-menu bs-border bg-white">
+                      <li>
+                        <a class="dropdown-item status-filter" data-status-text="All" data-status="1">All</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item status-filter" data-status-text="Purchased" data-status="2">Purchased</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item status-filter" data-status-text="Gift Received" data-status="3">Gift
+                          Received</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item status-filter" data-status-text="Free Claim" data-status="4">Free Claim</a>
+                      </li>
+                      <div class="cl-btn-wrapper d-none" id="clear-status-filter">
+                        <button class="clear-btn fs-14 fw-normal text-center w-100">
+                          Clear filters
+                        </button>
+                      </div>
+                    </ul>
+                  </div>
+                  <div class="dropdown filter-dropdown">
+                    <button id="status-filter-btn" class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <span class="fs-14 fw-md d-flex align-items-center gap-1">
+                        <img src="/images/circle-plus.svg" alt="" />Pack Types
+                      </span>
+                      <div class="hr-line-sm"></div>
+                      <div class="filter-data"></div>
+                    </button>
+                    <ul class="dropdown-menu filter-dropdown-menu bs-border bg-white">
+                      <li>
+                        <a class="dropdown-item status-filter" data-status-text="All" data-status="1">All</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item status-filter" data-status-text="Follower" data-status="2">Follower</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item status-filter" data-status-text="FAN" data-status="3">FAN</a>
+                      </li>
+                      <div class="cl-btn-wrapper d-none" id="clear-status-filter">
+                        <button class="clear-btn fs-14 fw-normal text-center w-100">
+                          Clear filters
+                        </button>
+                      </div>
+                    </ul>
+                  </div>
+                  <div class="dropdown filter-dropdown">
+                    <button id="status-filter-btn" class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <span class="fs-14 fw-md d-flex align-items-center gap-1">
+                        <img src="/images/circle-plus.svg" alt="" />Status
+                      </span>
+                      <div class="hr-line-sm"></div>
+                      <div class="filter-data"></div>
+                    </button>
+                    <ul class="dropdown-menu filter-dropdown-menu bs-border bg-white">
+                      <li>
+                        <a class="dropdown-item status-filter" data-status-text="All" data-status="1">All</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item status-filter" data-status-text="Active" data-status="2">Active</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item status-filter" data-status-text="Redeemed" data-status="3">Redeemed</a>
+                      </li>
+                      <div class="cl-btn-wrapper d-none" id="clear-status-filter">
+                        <button class="clear-btn fs-14 fw-normal text-center w-100">
+                          Clear filters
+                        </button>
+                      </div>
+                    </ul>
+                  </div>
+                  <button class="f-reset-btn fs-14 fw-md bg-transparent d-none" id="resetFilters">
+                    Reset <img src="/images/f-close.svg" alt="" />
+                  </button>
+                </div>
+
+                <div id="pagination-div" class="d-flex align-items-center flex-wrap justify-content-end gap-2">
+                  <div class="pagination-show d-flex align-items-center">
+                    Show
+                    <select id="recordPerPage" class="form-select form-select-sm w-auto" aria-label="Small select example" onchange="changeRecordPerPage('/admin/user-entries-filter', 'user-entries-table-data')">
+                      <option selected="10">10</option>
+                      <option value="20">20</option>
+                      <option value="40">40</option>
+                      <option value="60">60</option>
+                    </select>
+                  </div>
+                  <div class="page navigation example">
+                    <ul class="pagination justify-content-end mb-0 gap-0"></ul>
+                  </div>
+                </div>
+              </div>
+              <div class="admin-table mt-30">
+                <div id="user-entries-table-data"></div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Transaction History -->
+          <div class="tab-pane fade" id="transaction-list-tab" role="tabpanel" aria-labelledby="sb-transaction-listing-tab">
+            <div class="list-filter p-3 bg-white rounded-2 bs-border d-flex align-items-center justify-content-between">
+              <div class="filter-area">
+                <div class="dropdown filter-dropdown">
+                  <button id="trx-type-filter-btn" class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="fs-14 fw-md d-flex align-items-center gap-1">
+                      <img src="/images/circle-plus.svg" alt="" />Type
+                    </span>
+                    <div class="hr-line-sm"></div>
+                    <div class="filter-data"></div>
+                  </button>
+                  <ul class="dropdown-menu filter-dropdown-menu bs-border bg-white">
+                    <li>
+                      <a class="dropdown-item trx-type-filter" data-status-text="All" data-status="0">All</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item trx-type-filter" data-status-text="Free" data-status="1">Free</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item trx-type-filter" data-status-text="Paid" data-status="2">Paid</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item trx-type-filter" data-status-text="Gift Send" data-status="3">Gift</a>
+                    </li>
+                    <!-- <li>
+                      <a class="dropdown-item trx-type-filter" data-status-text="Gift Receive" data-status="5">Gift Receive</a>
+                    </li> -->
+                    <li>
+                      <a class="dropdown-item trx-type-filter" data-status-text="Mixed" data-status="4">Mixed</a>
+                    </li>
+                    <div class="cl-btn-wrapper d-none" id="trx-type-filter-clear">
+                      <button class="clear-btn fs-14 fw-normal text-center w-100">
+                        Clear filters
+                      </button>
+                    </div>
+                  </ul>
+                </div>
+                <div class="dropdown filter-dropdown">
+                  <button id="trx-status-filter-btn" class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="fs-14 fw-md d-flex align-items-center gap-1">
+                      <img src="/images/circle-plus.svg" alt="" />Payment Status
+                    </span>
+                    <div class="hr-line-sm"></div>
+                    <div class="filter-data"></div>
+                  </button>
+                  <ul class="dropdown-menu filter-dropdown-menu bs-border bg-white">
+                    <li>
+                      <a class="dropdown-item trx-status-filter" data-status-text="All" data-status="0">All</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item trx-status-filter" data-status-text="Success" data-status="2">Success</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item trx-status-filter" data-status-text="Failed" data-status="3">Failed</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item trx-status-filter" data-status-text="Pending" data-status="1">Pending</a>
+                    </li>
+                    <div class="cl-btn-wrapper d-none" id="trx-status-filter-clear">
+                      <button class="clear-btn fs-14 fw-normal text-center w-100">
+                        Clear filters
+                      </button>
+                    </div>
+                  </ul>
+                </div>
+                <div class="dropdown filter-dropdown">
+                  <button id="status-filter-btn" class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="fs-14 fw-md d-flex align-items-center gap-1">
+                      <img src="/images/circle-plus.svg" alt="" />Ticket Status
+                    </span>
+                    <div class="hr-line-sm"></div>
+                    <div class="filter-data"></div>
+                  </button>
+                  <ul class="dropdown-menu filter-dropdown-menu bs-border bg-white">
+                    <li>
+                      <a class="dropdown-item status-filter" data-status-text="All" data-status="0">All</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item status-filter" data-status-text="Active" data-status="1">Active</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item status-filter" data-status-text="Redeemed" data-status="2">Redeemed</a>
+                    </li>
+                    <div class="cl-btn-wrapper d-none" id="status-filter-clear">
+                      <button class="clear-btn fs-14 fw-normal text-center w-100">
+                        Clear filters
+                      </button>
+                    </div>
+                  </ul>
+                </div>
+                <div class="dropdown filter-dropdown">
+                  <button id="payment-filter-btn" class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="fs-14 fw-md d-flex align-items-center gap-1">
+                      <img src="/images/circle-plus.svg" alt="" />Payment Method
+                    </span>
+                    <div class="hr-line-sm"></div>
+                    <div class="filter-data"></div>
+                  </button>
+                  <ul class="dropdown-menu filter-dropdown-menu bs-border bg-white">
+                    <li>
+                      <a class="dropdown-item payment-filter" data-status-text="All" data-status="0">All</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item payment-filter" data-status-text="Paypal" data-status="2">Paypal</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item payment-filter" data-status-text="Stripe" data-status="1">Stripe</a>
+                    </li>
+                    <div class="cl-btn-wrapper d-none" id=payment-filter-clear">
+                      <button class="clear-btn fs-14 fw-normal text-center w-100">
+                        Clear filters
+                      </button>
+                    </div>
+                  </ul>
+                </div>
+
+                <button class="f-reset-btn fs-14 fw-md bg-transparent d-none" id="resetFilters">
+                  Reset <img src="/images/f-close.svg" alt="" />
+                </button>
+              </div>
+
+              <div id="pagination-div" class="d-flex align-items-center flex-wrap justify-content-end gap-2">
+                <div class="pagination-show d-flex align-items-center">
+                  Show
+                  <select id="recordPerPage" class="form-select form-select-sm w-auto" aria-label="Small select example" onchange="changeRecordPerPage('/admin/user-transaction-filter','user-transaction-history-table-data')">
+                    <option selected="10">10</option>
+                    <option value="20">20</option>
+                    <option value="40">40</option>
+                    <option value="60">60</option>
+                  </select>
+                </div>
+                <div class="page navigation example">
+                  <ul class="pagination justify-content-end mb-0 gap-0"></ul>
+                </div>
+              </div>
+            </div>
+            <div class="admin-table mt-30">
+                <div id="user-transaction-history-table-data"></div>
+            </div>
+          </div>
+
+          <!-- Gift Redeem History -->
+          <div class="tab-pane fade" id="gift-card-list-tab" role="tabpanel" aria-labelledby="sb-gift-card-tab">
+            <div class="list-filter p-3 bg-white rounded-2 bs-border d-flex align-items-center justify-content-between">
+              <div class="filter-area">
+                <div class="dropdown filter-dropdown">
+                  <button id="status-filter-btn" class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="fs-14 fw-md d-flex align-items-center gap-1">
+                      <img src="/images/circle-plus.svg" alt="" />Type
+                    </span>
+                    <div class="hr-line-sm"></div>
+                    <div class="filter-data"></div>
+                  </button>
+                  <ul class="dropdown-menu filter-dropdown-menu bs-border bg-white">
+                    <li>
+                      <a class="dropdown-item status-filter" data-status-text="All" data-status="1">All</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item status-filter" data-status-text="Purchased" data-status="2">Sent</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item status-filter" data-status-text="Gift Received" data-status="3">Received</a>
+                    </li>
+                    <div class="cl-btn-wrapper d-none" id="clear-status-filter">
+                      <button class="clear-btn fs-14 fw-normal text-center w-100">
+                        Clear filters
+                      </button>
+                    </div>
+                  </ul>
+                </div>
+                <div class="dropdown filter-dropdown">
+                  <button id="status-filter-btn" class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="fs-14 fw-md d-flex align-items-center gap-1">
+                      <img src="/images/circle-plus.svg" alt="" />Status
+                    </span>
+                    <div class="hr-line-sm"></div>
+                    <div class="filter-data"></div>
+                  </button>
+                  <ul class="dropdown-menu filter-dropdown-menu bs-border bg-white">
+                    <li>
+                      <a class="dropdown-item status-filter" data-status-text="All" data-status="1">All</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item status-filter" data-status-text="Active" data-status="2">Active</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item status-filter" data-status-text="Redeemed" data-status="3">Redeemed</a>
+                    </li>
+                    <div class="cl-btn-wrapper d-none" id="clear-status-filter">
+                      <button class="clear-btn fs-14 fw-normal text-center w-100">
+                        Clear filters
+                      </button>
+                    </div>
+                  </ul>
+                </div>
+                <button class="f-reset-btn fs-14 fw-md bg-transparent d-none" id="resetFilters">
+                  Reset <img src="/images/f-close.svg" alt="" />
+                </button>
+              </div>
+
+              <div id="pagination-div" class="d-flex align-items-center flex-wrap justify-content-end gap-2">
+                <div class="pagination-show d-flex align-items-center">
+                  Show
+                  <select id="recordPerPage" class="form-select form-select-sm w-auto" aria-label="Small select example" onchange="changeRecordPerPage('/admin/transaction-list')">
+                    <option selected="10">10</option>
+                    <option value="20">20</option>
+                    <option value="40">40</option>
+                    <option value="60">60</option>
+                  </select>
+                </div>
+                <div class="page navigation example">
+                  <ul class="pagination justify-content-end mb-0 gap-0"></ul>
+                </div>
+              </div>
+            </div>
+            <div class="admin-table mt-30">
+              <div class="table-responsive">
+                <table class="align-middle text-nowrap">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Date</th>
+                      <th>Product</th>
+                      <th>Entries</th>
+                      <th>Cost (USD)</th>
+                      <th>Type</th>
+                      <th>From/To</th>
+                      <th>Status</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span>12/20/2024</span></td>
+                      <td><span class="fw-bold">Chris Hemsworth</span></td>
+                      <td><span>5</span></td>
+                      <td><span>$50.00</span></td>
+                      <td><span class="badge bg-danger">Sent</span></td>
+                      <td><span class="user-email">jane@example.com</span></td>
+                      <td><span class="badge bg-lifted">Redeemed</span></td>
+
+                    </tr>
+                    <tr>
+                      <td><span>12/20/2024</span></td>
+                      <td><span class="fw-bold">Chris Hemsworth</span></td>
+                      <td><span>5</span></td>
+                      <td><span>$50.00</span></td>
+                      <td><span class="badge bg-warning">Received</span></td>
+                      <td><span class="user-email">jane@example.com</span></td>
+                      <td><span class="badge bg-success">active</span></td>
+
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- Redeemed History -->
+          <div class="tab-pane fade" id="redeemed-list-tab" role="tabpanel" aria-labelledby="sb-redeemed-tab">
+            <div class="list-filter p-3 bg-white rounded-2 bs-border d-flex align-items-center justify-content-between">
+              <div class="filter-area">
+                <div class="dropdown filter-dropdown filter-name">
+                  <button class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="fs-14 fw-md d-flex align-items-center gap-1"><img src="/images/circle-plus.svg" alt="" />Product</span>
+                    <div class="hr-line-sm"></div>
+                    <div class="filter-data"></div>
+                  </button>
+                  <div class="dropdown-menu filter-dropdown-menu amount-filter bs-border bg-white">
+                    <div class="form-group mt-10">
+                      <select class="form-control" id="nameSelect" name="nameSelect">
+                        <% if (body?.userList && body?.userList.length> 0) { %>
+                        <option value="" disabled selected>
+                          Please select a name
+                        </option>
+                        <% body?.userList.forEach(user=> { %>
+                        <option data-id="<%= user._id?.toString() %>" value="<%= user.userName %>">
+                          <%= user.userName %>
+                        </option>
+                        <% }); %>
+                        <% } else { %>
+                        <option value="">No users available</option>
+                        <% } %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <button class="f-reset-btn fs-14 fw-md bg-transparent d-none" id="resetFilters">
+                  Reset <img src="/images/f-close.svg" alt="" />
+                </button>
+              </div>
+
+              <div id="pagination-div" class="d-flex align-items-center flex-wrap justify-content-end gap-2">
+                <div class="pagination-show d-flex align-items-center">
+                  Show
+                  <select id="recordPerPage" class="form-select form-select-sm w-auto" aria-label="Small select example" onchange="changeRecordPerPage('/admin/transaction-list')">
+                    <option selected="10">10</option>
+                    <option value="20">20</option>
+                    <option value="40">40</option>
+                    <option value="60">60</option>
+                  </select>
+                </div>
+                <div class="page navigation example">
+                  <ul class="pagination justify-content-end mb-0 gap-0"></ul>
+                </div>
+              </div>
+            </div>
+            <div class="admin-table mt-30">
+              <div class="table-responsive">
+                <table class="align-middle text-nowrap">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Date</th>
+                      <th>Product</th>
+                      <th>Entries</th>
+                      <th>Cost (USD)</th>
+                      <th>From</th>
+                      <th>Status</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span>12/10/2024</span></td>
+                      <td><span class="fw-bold">Chris Hemsworth</span></td>
+                      <td><span>20</span></td>
+                      <td><span class="fw-bold">$45.00</span></td>
+                      <td><span class="user-email">alex@example.com</span></td>
+                      <td><span class="badge bg-lifted">Redeemed</span></td>
+                    </tr>
+                    <tr>
+                      <td><span>12/10/2024</span></td>
+                      <td><span class="fw-bold">Chris Hemsworth</span></td>
+                      <td><span>20</span></td>
+                      <td><span class="fw-bold">$45.00</span></td>
+                      <td><span class="user-email">alex@example.com</span></td>
+                      <td><span class="badge bg-lifted">Redeemed</span></td>
+                    </tr>
+                    <tr>
+                      <td><span>12/10/2024</span></td>
+                      <td><span class="fw-bold">Chris Hemsworth</span></td>
+                      <td><span>20</span></td>
+                      <td><span class="fw-bold">$45.00</span></td>
+                      <td><span class="user-email">alex@example.com</span></td>
+                      <td><span class="badge bg-lifted">Redeemed</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+            <!-- Contest History -->
+            <div class="tab-pane fade" id="contest" role="tabpanel" aria-labelledby="contest-tab">
+                <!-- <div class="pb-5">
+                    <div class="row gy-4">
+                    <div class="col-xl-4 col-md-6">
+                        <div class="static-card bg-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="static-data">
+                            <span class="sd-title fs-14 d-block">Total Spent on Celebrities</span>
+                            <span class="sd-data">$0</span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+        
+                </div>
+                </div> -->
+                <div class="list-filter p-3 bg-white rounded-2 bs-border d-flex align-items-center justify-content-between">
+                    <div class="filter-area">
+                   <div class="dropdown filter-dropdown filter-name">
+                                <button class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="fs-14 fw-md d-flex align-items-center gap-1"><img src="/images/circle-plus.svg" alt="">Product</span>
+                                    <div class="hr-line-sm"></div>
+                                    <div class="filter-data"></div>
+                                </button>
+                                <div class="dropdown-menu filter-dropdown-menu amount-filter bs-border bg-white" style="">
+                                    <div class="form-group mt-10">
+                                        <select class="form-control" id="nameSelect" name="nameSelect">
+                                            
+                                                <option value="" disabled="" selected="">
+                                                    Please select a name
+                                                </option>
+                                                
+                                                    <option data-id="687f07216c65abfba7973e1a" value="Tokyo">
+                                                        Tokyo
+                                                    </option>
+                                                    
+                                                    <option data-id="68789994185704c58044c13f" value="Sunny">
+                                                        Sunny
+                                                    </option>
+                                                    
+                                                    <option data-id="687655b083356362eb8c853a" value="Tom Cruise">
+                                                        Tom Cruise
+                                                    </option>
+                                                    
+                                                    <option data-id="687654e283356362eb8c852b" value="Brad Pitt">
+                                                        Brad Pitt
+                                                    </option>
+                                                    
+                                                    <option data-id="68761bd1d439f0acc05fbf26" value="Test">
+                                                        Test
+                                                    </option>
+                                                    
+                                                    <option data-id="68709702a597ba9b68b333bf" value="Sonu">
+                                                        Sonu
+                                                    </option>
+                                                    
+                                                    <option data-id="686e21aa35d22fca41e09dac" value="Dev">
+                                                        Dev
+                                                    </option>
+                                                    
+                                                    <option data-id="686e10385a41861f389c0624" value="Bhavesh Kushwaha">
+                                                        Bhavesh Kushwaha
+                                                    </option>
+                                                    
+                                                    <option data-id="686b5c66d7995eb0a4b8bdfe" value="Roy Calvin">
+                                                        Roy Calvin
+                                                    </option>
+                                                    
+                                                    <option data-id="685bb1bfc3cd67f951474efe" value="Barlin Marvel">
+                                                        Barlin Marvel
+                                                    </option>
+                                                    
+                                                    <option data-id="685bb03cc27c19c88f93ca64" value="Niks john 02">
+                                                        Niks john 02
+                                                    </option>
+                                                    
+                                                        
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                <div class="dropdown filter-dropdown">
+                    <button id="status-filter-btn" class="filter-btn dropdown-toggle" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="fs-14 fw-md d-flex align-items-center gap-1">
+                            <img src="/images/circle-plus.svg" alt="" />Payment Method
+                        </span>
+                        <div class="hr-line-sm"></div>
+                        <div class="filter-data"></div>
+                    </button>
+                    <ul class="dropdown-menu filter-dropdown-menu bs-border bg-white">
+                        <li>
+                            <a class="dropdown-item status-filter" data-status-text="All"
+                                data-status="1">All</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item status-filter" data-status-text="Paypal"
+                                data-status="2">Paypal</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item status-filter" data-status-text="Stripe"
+                                data-status="3">Stripe</a>
+                        </li>
+                        <div class="cl-btn-wrapper d-none" id="clear-status-filter">
+                            <button class="clear-btn fs-14 fw-normal text-center w-100">
+                                Clear filters
+                            </button>
+                        </div>
+                    </ul>
+                </div>
+                 <div class="dropdown filter-dropdown">
+                    <button id="status-filter-btn" class="filter-btn dropdown-toggle" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="fs-14 fw-md d-flex align-items-center gap-1">
+                            <img src="/images/circle-plus.svg" alt="" />Status
+                        </span>
+                        <div class="hr-line-sm"></div>
+                        <div class="filter-data"></div>
+                    </button>
+                    <ul class="dropdown-menu filter-dropdown-menu bs-border bg-white">
+                        <li>
+                            <a class="dropdown-item status-filter" data-status-text="All"
+                                data-status="1">All</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item status-filter" data-status-text="Unsubmitted"
+                                data-status="2">Unsubmitted</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item status-filter" data-status-text="Under Review"
+                                data-status="3">Under Review</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item status-filter" data-status-text="Rejected"
+                                data-status="3">Rejected</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item status-filter" data-status-text="Winner"
+                                data-status="3">Winner</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item status-filter" data-status-text="Not Selected"
+                                data-status="3">Not Selected</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item status-filter" data-status-text="Expired"
+                                data-status="3">Expired</a>
+                        </li>
+                        <div class="cl-btn-wrapper d-none" id="clear-status-filter">
+                            <button class="clear-btn fs-14 fw-normal text-center w-100">
+                                Clear filters
+                            </button>
+                        </div>
+                    </ul>
+                </div>
+
+                <button class="f-reset-btn fs-14 fw-md bg-transparent d-none" id="resetFilters">
+                    Reset <img src="/images/f-close.svg" alt="" />
+                </button>
+            </div>
+
+            <div id="pagination-div" class="d-flex align-items-center flex-wrap justify-content-end gap-2">
+                <div class="pagination-show d-flex align-items-center">
+                    Show
+                    <select id="recordPerPage" class="form-select form-select-sm w-auto"
+                        aria-label="Small select example"
+                        onchange="changeRecordPerPage('/admin/transaction-list')">
+                        <option selected="10">10</option>
+                        <option value="20">20</option>
+                        <option value="40">40</option>
+                        <option value="60">60</option>
+                    </select>
+                </div>
+                <div class="page navigation example">
+                    <ul class="pagination justify-content-end mb-0 gap-0"></ul>
+                </div>
+            </div>
+                </div>
+                <div class="admin-table mt-30">
+                    <div class="table-responsive">
+                        <table class="align-middle text-nowrap">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>TRX ID</th>
+                                    <th>Purchase Date</th>
+                                    <th>Product</th>
+                                    <th>Entry Fee (USD)</th>
+                                    <th>Payment Method</th>
+                                    <th>Timeline</th>
+                                    <th>Status</th>
+                                    <th class="text-center ts">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold">TXN-G001</span>
+                                            <button class="table-btn copy-btn">
+                                                <img src="../../images/icon-copy-lg.svg" alt="" />
+                                                <span class="copied-text">Copied!</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td><span>12/28/2024, 10:15 AM</span></td>
+                                    <td><span>Ryan Reynolds</span></td>
+                                    <td><span>$5</span></td>
+                                    <td><span class="badge bg-info">Strip</span></td>
+                                    <td><span class="text-black">Deadline: Aug 21, 2025</span> <br> <span class="fs-14">30 days remaining</span> </td>
+                                    <td><span class="badge bg-orange">Unsubmitted </span></td>
+                                    <td class="text-center ts">
+                                        <div class="d-flex align-items-center justify-content-end  gap-2 ms-auto me-2">
+                                            <button class="view-icon c-tooltip table-tooltip " tooltip-text="View Details" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#contest-modal">
+                                            <span class="opacity-0">View</span>
+                                        </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold">TXN-G001</span>
+                                            <button class="table-btn copy-btn">
+                                                <img src="../../images/icon-copy-lg.svg" alt="" />
+                                                <span class="copied-text">Copied!</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td><span>12/28/2024, 10:15 AM</span></td>
+                                    <td><span>Emly Tex</span></td>
+                                    <td><span>$5</span></td>
+                                    <td><span class="badge bg-info">Strip</span></td>
+                                    <td><span class="text-blue">Under Review </span> <br> <span class="fs-14">Submitted Jul 22,2025 </span> </td>
+                                    <td><span class="badge bg-info">Under Review </span></td>
+                                    <td class="text-center ts">
+                                        <div class="d-flex align-items-center justify-content-end  gap-2 ms-auto me-2">
+                                            <button class="view-icon c-tooltip table-tooltip " tooltip-text="View Details" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#contest-modal">
+                                            <span class="opacity-0">View</span>
+                                        </button>
+                                        <button class="c-tooltip table-tooltip data-edit p-0" tooltip-text="Approve">
+                                            <svg width="35" height="35" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M29.5 1H7.5C3.91015 1 1 3.91015 1 7.5V29.5C1 33.0899 3.91015 36 7.5 36H29.5C33.0899 36 36 33.0899 36 29.5V7.5C36 3.91015 33.0899 1 29.5 1Z" fill="white" stroke="#00C817"/>
+                                            <path d="M26.5 12.5L15.5 23.5L10.5 18.5" stroke="#00C817" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                        </button>
+                                        <button  class=" c-tooltip table-tooltip data-edit p-0" tooltip-text="Reject">
+                                        <svg width="35" height="35" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M29.5 1H7.5C3.91015 1 1 3.91015 1 7.5V29.5C1 33.0899 3.91015 36 7.5 36H29.5C33.0899 36 36 33.0899 36 29.5V7.5C36 3.91015 33.0899 1 29.5 1Z" fill="white" stroke="#CE3D40"/>
+                                            <path d="M24.5 12.5L12.5 24.5" stroke="#CE3D40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M12.5 12.5L24.5 24.5" stroke="#CE3D40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold">TXN-G002</span>
+                                            <button class="table-btn copy-btn">
+                                                <img src="../../images/icon-copy-lg.svg" alt="" />
+                                                <span class="copied-text">Copied!</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td><span>12/28/2024, 10:15 AM</span></td>
+                                    <td><span>Emly Tex</span></td>
+                                    <td><span>$5</span></td>
+                                    <td><span class="badge bg-info">Strip</span></td>
+                                    <td><span class="text-danger">Rejected </span> <br> <span class="fs-14">Reviewed Jul 10,2025</span></td>
+                                    <td><span class="badge bg-danger">Rejected </span></td>
+                                    <td class="text-center ts">
+                                        <div class="d-flex align-items-center justify-content-end  gap-2 ms-auto me-2">
+                                            <button class="view-icon c-tooltip table-tooltip " tooltip-text="View Details" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#contest-modal">
+                                            <span class="opacity-0">View</span>
+                                        </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold">TXN-G002</span>
+                                            <button class="table-btn copy-btn">
+                                                <img src="../../images/icon-copy-lg.svg" alt="" />
+                                                <span class="copied-text">Copied!</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td><span>12/28/2024, 10:15 AM</span></td>
+                                    <td><span>Emly Tex</span></td>
+                                    <td><span>$5</span></td>
+                                    <td><span class="badge bg-info">Strip</span></td>
+                                    <td><span class="text-success">Approved </span> <br> <span class="fs-14">Reviewed Jul 10,2025</span></td>
+                                    <td><span class="badge bg-success">Approved </span></td>
+                                    <td class="text-center ts">
+                                        <div class="d-flex align-items-center justify-content-end  gap-2 ms-auto me-2">
+                                            <button class="view-icon c-tooltip table-tooltip " tooltip-text="View Details" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#contest-modal">
+                                            <span class="opacity-0">View</span>
+                                        </button>
+                                        <button class="c-tooltip table-tooltip data-edit p-0" tooltip-text="Winner">
+                                            <svg width="37" height="36" viewBox="0 0 37 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M29.7812 0.5H7.78125C4.1914 0.5 1.28125 3.41015 1.28125 7V29C1.28125 32.5899 4.1914 35.5 7.78125 35.5H29.7812C33.3711 35.5 36.2812 32.5899 36.2812 29V7C36.2812 3.41015 33.3711 0.5 29.7812 0.5Z" fill="white" stroke="#D3AE59"/>
+                                                    <path d="M16.7812 20.6602V22.2862C16.7775 22.6288 16.6857 22.9647 16.5148 23.2617C16.3439 23.5586 16.0996 23.8067 15.8053 23.9822C15.1804 24.445 14.6721 25.0471 14.3207 25.7408C13.9694 26.4345 13.7847 27.2006 13.7812 27.9782" stroke="#D3AE59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M20.7812 20.6602V22.2862C20.785 22.6288 20.8768 22.9647 21.0477 23.2617C21.2186 23.5586 21.4629 23.8067 21.7572 23.9822C22.3821 24.445 22.8904 25.0471 23.2418 25.7408C23.5931 26.4345 23.7778 27.2006 23.7812 27.9782" stroke="#D3AE59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M24.7812 15H26.2812C26.9443 15 27.5802 14.7366 28.049 14.2678C28.5179 13.7989 28.7812 13.163 28.7812 12.5C28.7812 11.837 28.5179 11.2011 28.049 10.7322C27.5802 10.2634 26.9443 10 26.2812 10H24.7812" stroke="#D3AE59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M10.7812 28H26.7812" stroke="#D3AE59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M12.7812 15C12.7813 16.5913 13.4134 18.1174 14.5386 19.2426C15.6638 20.3679 17.19 21 18.7812 21C20.3725 21 21.8987 20.3679 23.0239 19.2426C24.1491 18.1174 24.7812 16.5913 24.7812 15V9C24.7812 8.73478 24.6759 8.48043 24.4884 8.29289C24.3008 8.10536 24.0465 8 23.7812 8H13.7812C13.516 8 13.2617 8.10536 13.0741 8.29289C12.8866 8.48043 12.7812 8.73478 12.7812 9V15Z" stroke="#D3AE59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M12.7812 15H11.2812C10.6182 15 9.98232 14.7366 9.51348 14.2678C9.04464 13.7989 8.78125 13.163 8.78125 12.5C8.78125 11.837 9.04464 11.2011 9.51348 10.7322C9.98232 10.2634 10.6182 10 11.2812 10H12.7812" stroke="#D3AE59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    </svg>
+                                        </button>
+                                        <button  class=" c-tooltip table-tooltip data-edit p-0" tooltip-text="Excluded">
+                                        <svg width="37" height="37" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M29.5 0.89502H7.5C3.91015 0.89502 1 3.80517 1 7.39502V29.395C1 32.9849 3.91015 35.895 7.5 35.895H29.5C33.0899 35.895 36 32.9849 36 29.395V7.39502C36 3.80517 33.0899 0.89502 29.5 0.89502Z" fill="white" stroke="#CE3D40"/>
+                                        <path d="M19 28C24.5228 28 29 23.5228 29 18C29 12.4772 24.5228 8 19 8C13.4772 8 9 12.4772 9 18C9 23.5228 13.4772 28 19 28Z" stroke="#CE3D40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M16 21L22 15" stroke="#CE3D40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+
+                                        </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                    
+                                    <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold">TXN-G005</span>
+                                            <button class="table-btn copy-btn">
+                                                <img src="../../images/icon-copy-lg.svg" alt="" />
+                                                <span class="copied-text">Copied!</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td><span>12/28/2024, 10:15 AM</span></td>
+                                    <td><span>Emly Tex</span></td>
+                                    <td><span>$5</span></td>
+                                    <td><span class="badge bg-info">Strip</span></td>
+                                    <td><span class="text-purple"> Winner ✨✨</span> <br> <span class="fs-14">Result Declared Jul 10,2025</span> </td>
+                                    <td><span class="badge bg-purple">✨ Winner ✨</span></td>
+                                    <td class="text-center ts">
+                                        <div class="d-flex align-items-center justify-content-end  gap-2 ms-auto me-2">
+                                            <button class="view-icon c-tooltip table-tooltip " tooltip-text="View Details" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#contest-modal">
+                                            <span class="opacity-0">View</span>
+                                        </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold">TXN-G002</span>
+                                            <button class="table-btn copy-btn">
+                                                <img src="../../images/icon-copy-lg.svg" alt="" />
+                                                <span class="copied-text">Copied!</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td><span>12/28/2024, 10:15 AM</span></td>
+                                    <td><span>Emly Tex</span></td>
+                                    <td><span>$5</span></td>
+                                    <td><span class="badge bg-info">Strip</span></td>
+                                    <td><span class="text-warn">Not Selected </span> <br> <span class="fs-14">Result Declared Jul 10,2025</span></td>
+                                    <td><span class="badge bg-warning">Not Selected </span></td>
+                                    <td class="text-center ts">
+                                        <div class="d-flex align-items-center justify-content-end  gap-2 ms-auto me-2">
+                                            <button class="view-icon c-tooltip table-tooltip " tooltip-text="View Details" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#gtView">
+                                            <span class="opacity-0">View</span>
+                                        </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold">TXN-G001</span>
+                                            <button class="table-btn copy-btn">
+                                                <img src="../../images/icon-copy-lg.svg" alt="" />
+                                                <span class="copied-text">Copied!</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td><span>12/28/2024, 10:15 AM</span></td>
+                                    <td><span>Ryan Reynolds</span></td>
+                                    <td><span>$5</span></td>
+                                    <td><span class="badge bg-info">Strip</span></td>
+                                    <td><span class="text-secondary">Expired</span> <br> <span class="fs-14">Jun 1, 2025</span> </td>
+                                    <td><span class="badge bg-gray">Expired </span></td>
+                                    <td class="text-center ts action-width">
+                                        <div class="d-flex align-items-center justify-content-end  gap-2 ms-auto me-2">
+                                            <button class="view-icon c-tooltip table-tooltip " tooltip-text="View Details" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#contest-modal">
+                                            <span class="opacity-0">View</span>
+                                        </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+          <!-- Suspension History -->
+          <div class="tab-pane fade" id="sb-suspension-history" role="tabpanel" aria-labelledby="sb-suspension-history-tab">
+            <!-- <div class="suspension-card">
+                                    <h5 class="fs-20 fw-md stas-heading d-flex align-items-center gap-1 mb-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ban h-5 w-5" data-lov-name="Ban" data-component-name="Ban">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <path d="m4.9 4.9 14.2 14.2"></path>
+                                        </svg>
+                                        Suspension History
+                                    </h5>
+                                    <div class="suspension-data">
+                                        <% if (body.userSuspensionHistory.length) { body.userSuspensionHistory.forEach(item => { %>
+                                            <div class="suspension-item">
+                                                <h3>Suspended by Admin User <span><%= formatDate(item.date) %></span></h3>
+                                                <p><%= item.reason %></p>
+                                            </div>
+                                            
+                                        <% }) } else { %>
+                                            <div class="no-user-found">
+                                                <h5 class="text-center mb-2">No suspension history found</h5>
+                                                <p class="text-center fs-6 text-gray ">This user has never been suspended.</p>
+                                            </div>
+
+                                       
+                                        <% } %>
+                                    </div>
+                                </div> -->
+            <div class="admin-table mt-20">
+              <div class="table-responsive">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Action</th>
+                      <th>Reason</th>
+                      <th>Action By</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if(body?.suspensionHistory?.length > 0) {
+                       body?.suspensionHistory?.forEach((item) => {
+                    %>
+                    <tr>
+                      <td><span class="text-black"><%= formatDate(item.created_at)%></span></td>
+                      <td>
+                        <span class="badge bg-danger">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-minus-icon lucide-user-round-minus">
+                            <path d="M2 21a8 8 0 0 1 13.292-6" />
+                            <circle cx="10" cy="8" r="5" />
+                            <path d="M22 19h-6" />
+                          </svg> Suspended
+                        </span>
+                      </td>
+                      <td><%= item.reason %></td>
+                      <td><span class="text-black">Admin Team</span></td>
+                      <td>Suspended via admin panel</td>
+                    </tr>
+                 <% }) %>
+                    <% } else {%>
+                      <tr><td colspan="5" class="text-center">No suspension history found</td></tr>
+                    <%}%>
+                    <tr>
+                      <td><span class="text-black">18/07/2025</span></td>
+                      <td>
+                        <span class="badge bg-success">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-check-icon lucide-user-round-check">
+                            <path d="M2 21a8 8 0 0 1 13.292-6" />
+                            <circle cx="10" cy="8" r="5" />
+                            <path d="m16 19 2 2 4-4" />
+                          </svg> Unsuspended
+                        </span>
+                      </td>
+                      <td>Account Restored</td>
+                      <td><span class="text-black">Admin Team</span></td>
+                      <td>User appeal accepted</td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contest Details -->
+<div class="modal fade custom-popup" id="contest-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered celeb-form">
+        <div class="modal-content">
+            <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                       Contest Entry Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <svg width="30" height="31" viewBox="0 0 30 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g clip-path="url(#clip0_161_15505)">
+                                <path d="M22.5 8L7.5 23" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7.5 8L22.5 23" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_161_15505">
+                                    <rect width="30" height="30" fill="white" transform="translate(0 0.5)"/>
+                                </clipPath>
+                            </defs>
+                        </svg>
+                    </button>
+                </div>
+            <div class="modal-body">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="border rounded p-3 bg-white h-100">
+                            <div class="mb-3">
+                                 <p class="fs-14 fw-medium text-secondary mb-1">TRX Id :</p>
+                              <span> 
+                                    <span class="t-id">TXN-Gfdfmhsfdkjgjkdljghjfsjgdkfg001</span>
+                                    <button class="table-btn copy-btn d-inline">
+                                     <img src="../../images/icon-copy-lg.svg" alt="">
+                                    <span class="copied-text">Copied!</span>
+                                    </button>
+                                </span>
+                            </div>
+                             <div class="mb-3">
+                                <p class="fs-14 fw-medium text-secondary mb-1">Entry Fee :</p>
+                             <span class="text-success fw-bold fs-6"> $65.00</span>
+                             </div>
+                             <div>
+                                 <p class="fs-14 fw-medium text-secondary mb-1">Status :</p>
+                             <span class="badge bg-orange"> Unsubmitted </span>
+                             </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="border rounded p-3 bg-white h-100">
+                            <div class="mb-3">
+                                 <p class="fs-14 fw-medium text-secondary mb-1">Product:</p>
+                              <span class="fw-bold fs-6">Ryan Reynolds</span>
+                            </div>
+                             <div class="mb-3">
+                                <p class="fs-14 fw-medium text-secondary mb-1">Purchase Date:</p>
+                             <span class="fs-6">Jul 21, 2025, 04:10 PM</span>
+                             </div>
+                             <div>
+                                 <p class="fs-14 fw-medium text-secondary mb-1">Payment Method:</p>
+                             <span class="badge bg-info"> Strip </span>
+                             </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <h5 class="mb-2">Submission Details</h5>
+                        <div class="border rounded p-3 bg-white">
+                            <div class="mb-3">
+                                <p class="fs-14 fw-medium text-secondary mb-1">Submission Title:</p>
+                             <span class="fw-medium fs-6"> Lorem ipsum dolor sit amet consectetur </span>
+                             </div>
+                            <div class="mb-3">
+                                <p class="fs-14 fw-medium text-secondary mb-1">Description:</p>
+                             <span class="fs-14"> Lorem, ipsum dolor sit amet consectetur adipisicing elit. In atque voluptas quaerat. Architecto, doloremque magnam voluptatum quos, pariatur suscipit aperiam optio nemo ea, eaque quidem fugiat dignissimos sed ratione. Quia. </span>
+                             </div>
+                            <div>
+                                    <p class="fw-medium mb-2">Social Media Links:</p>
+                                 <div class="link-wrapper mb-2 p-2 rounded bg-white border">
+                                     <div class="d-flex justify-content-between">
+                                        <span class="d-flex align-items-center gap-3"> <span class="badge bg-info">Twitter (X)</span>  <a href="#" class="text-blue fs-16">https://www.google.com/</a> </span>
+                                      <button class="table-btn copy-btn d-inline ms-auto me-0">
+                                     <img src="../../images/icon-copy-lg.svg" alt="">
+                                    <span class="copied-text">Copied!</span>
+                                    </button>
+                                     </div> 
+                                    <p class="fs-14 fw-normal mt-2 text-secondary">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum eveniet natus dolorum dolores, tempore fugit odit?</p>
+                                 </div>
+                                  <div class="link-wrapper mb-2 p-2 rounded bg-white border">
+                                     <div class="d-flex justify-content-between">
+                                        <span class="d-flex align-items-center gap-3"> <span class="badge bg-info">Facebook</span>  <a href="#" class="text-blue fs-16">https://www.google.com/</a> </span>
+                                      <button class="table-btn copy-btn d-inline ms-auto me-0">
+                                     <img src="../../images/icon-copy-lg.svg" alt="">
+                                    <span class="copied-text">Copied!</span>
+                                    </button>
+                                     </div> 
+                                    <p class="fs-14 fw-normal mt-2 text-secondary">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum eveniet natus dolorum dolores, tempore fugit odit?</p>
+                                 </div>
+                                  <div class="link-wrapper mb-2 p-2 rounded bg-white border">
+                                     <div class="d-flex justify-content-between">
+                                        <span class="d-flex align-items-center gap-3"> <span class="badge bg-info">Twitch</span>  <a href="#" class="text-blue fs-16">https://www.google.com/</a> </span>
+                                      <button class="table-btn copy-btn d-inline ms-auto me-0">
+                                     <img src="../../images/icon-copy-lg.svg" alt="">
+                                    <span class="copied-text">Copied!</span>
+                                    </button>
+                                     </div> 
+                                    <p class="fs-14 fw-normal mt-2 text-secondary">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum eveniet natus dolorum dolores, tempore fugit odit?</p>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+             <hr>
+              <h5 class="mb-2">Timeline</h5>
+              <ul class="timeline-list">
+                <li class="purchase">
+                  <div>
+                      <span class="fw-medium">Purchased</span> <br>
+                    <p class="text-secondary fs-14">Jul 21, 2025, 04:10 PM</p>
+                  </div>
+                </li>
+                <li class="submit">
+                     <div>
+                      <span class="fw-medium">Submitted</span> <br>
+                    <p class="text-secondary fs-14">Jul 21, 2025, 04:10 PM</p>
+                  </div>
+                </li>
+                <li class="review">
+                     <div>
+                      <span class="fw-medium">Review</span> <br>
+                    <p class="text-secondary fs-14">Jul 21, 2025, 04:10 PM</p>
+                  </div>
+                </li>
+                <li class="select">
+                     <div>
+                      <span class="fw-medium">Selection</span> <br>
+                    <p class="text-secondary fs-14">Jul 21, 2025, 04:10 PM <span class="badge bg-success">Selected</span></p>
+                  </div>
+                </li>
+                <li class="result">
+                     <div>
+                      <span class="fw-medium">Result</span> <br>
+                    <p class="text-secondary fs-14">Jul 21, 2025, 04:10 PM <span class="badge bg-purple">✨ Winner ✨</span></p>
+                    
+                  </div>
+                </li>
+                
+              </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Suspend User Modal -->
+<div class="modal fade custom-popup" id="user-suspend-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+          <div class="modal-header align-items-start">
+          <h5 class="modal-title" id="exampleModalLabel">
+            Suspend User
+            <span class="d-block">You are about to suspend John Smith's account. Please provide a reason for this action.</span>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            <svg width="30" height="31" viewBox="0 0 30 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_161_15505)">
+                <path d="M22.5 8L7.5 23" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M7.5 8L22.5 23" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </g>
+              <defs>
+                <clipPath id="clip0_161_15505">
+                  <rect width="30" height="30" fill="white" transform="translate(0 0.5)" />
+                </clipPath>
+              </defs>
+            </svg>
+          </button>
+        </div>
+      <div class="modal-body">
+        <div class="reject-div">
+          <div class="reject-box">
+            <div class="flex-fill">
+              <label for="productCategory" class="form-label text-dark">Suspension Reason*</label>
+              <select class="form-select form-control" id="category_type">
+                <option value="" disabled="" selected="">
+                  Select reason
+                </option>
+                <option value="1">Violation of terms of service </option>
+                <option value="2">Inappropriate behavior </option>
+                <option value="2">Suspicious account activity</option>
+                <option value="2">Payment disputes</option>
+                <option value="2">Spam or abuse</option>
+                <option value="2">Security concerns</option>
+                <option value="2">Other</option>
+              </select>
+            </div>
+            <div class="mt-3">
+            <label for="description" class="form-label text-dark">Additional Notes</label>
+            <textarea class="form-control rounded-3" id="description" rows="3" placeholder="Optional additional note"></textarea>
+          </div>
+          </div>
+        </div>
+        <div class="page-btn two-btn mt-20">
+          <button class="btn btn-primary btn-transparent w-100 text-center" data-bs-dismiss="modal">Cancel</button>
+          <button id="confirm-user-suspension" class="btn btn-primary btn-red w-100 text-center">Confirm Suspension</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Un-Suspend User Modal -->
+<div class="modal fade custom-popup" id="user-unsuspend-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+         <div class="modal-header align-items-start">
+          <h5 class="modal-title" id="exampleModalLabel">Unsuspend user</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            <svg width="30" height="31" viewBox="0 0 30 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_161_15505)">
+                <path d="M22.5 8L7.5 23" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M7.5 8L22.5 23" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </g>
+              <defs>
+                <clipPath id="clip0_161_15505">
+                  <rect width="30" height="30" fill="white" transform="translate(0 0.5)" />
+                </clipPath>
+              </defs>
+            </svg>
+          </button>
+        </div>
+      <div class="modal-body">
+        <span class="">Are you sure you want to Unsuspend this user?</span>
+        <div class="page-btn two-btn mt-20">
+          <button class="btn btn-primary btn-transparent w-100 text-center" data-bs-dismiss="modal">Cancel</button>
+          <button id="confirm-user-unsuspend" data-user-id="" class="btn btn-primary btn-green w-100 text-center">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const resetBtn = document.querySelector('.user-access-container .action-buttons .btn.reset-btn');
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function() {
+        // Remove the reset button
+        this.remove();
+
+        // Find and update the enabled button
+        const enabledBtn = document.querySelector('.user-access-container .status-btn-wrapper button.enabled');
+        if (enabledBtn) {
+          // Update classes
+          enabledBtn.classList.remove('enabled');
+          enabledBtn.classList.add('disable');
+
+          // Update text
+          enabledBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-off">
+                        <path d="m2 2 20 20"></path>
+                        <path d="M5 5a1 1 0 0 0-1 1v7c0 5 3.5 7.5 7.67 8.94a1 1 0 0 0 .67.01c2.35-.82 4.48-1.97 5.9-3.71"></path>
+                        <path d="M9.309 3.652A12.252 12.252 0 0 0 11.24 2.28a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1v7a9.784 9.784 0 0 1-.08 1.264"></path>
+                        </svg>
+                        2FA Disabled
+                    `;
+        }
+      });
+    }
+  });
+</script>
+
+<%- include("footer.ejs") %>

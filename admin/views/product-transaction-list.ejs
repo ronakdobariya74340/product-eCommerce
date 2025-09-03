@@ -1,0 +1,66 @@
+<%
+    function formatDate(date) {
+        let d = new Date(date);
+        let day = ('0' + d.getDate()).slice(-2);
+        let month = ('0' + (d.getMonth() + 1)).slice(-2);
+        let year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+%>
+
+<div class="admin-table mt-30">
+    <div class="table-responsive">
+        <table>
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Trx ID</th>
+                    <th>User Name</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Product Price</th>
+                    <th>Total Amount</th>
+                    <th>Payment Method</th>
+                    <th>Status</th>
+                    <th>Trx Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if(body?.totalTransaction !==undefined && body?.totalTransaction > 0) { body?.transaction.forEach((trx, index)=> { let start_index = (parseInt(body?.param?.currentPage) - 1) * parseInt(body?.param?.itemPerPage) + index + 1; %>
+                    <tr>
+                        <td><%- start_index %></td>
+                        <td><%- txn?._id || "N/A" %></td>
+                        <td><%- txn?.userDetails?.userName || "N/A" %></td>
+                        <td><%- txn?.productDetails?.name || "N/A" %></td>
+                        <td><%- txn?.totalQuantity || 0 %></td>
+                        <td><%- txn?.productDetails?.productPrice || 0 %></td>
+                        <td><%- txn?.productDetails?.totalTrxAmount || 0 %></td>
+                        <td>
+                            <% if (txn?.paymentMethod === 1) { %>
+                              Stripe
+                            <% } else if (txn?.paymentMethod === 2) { %>
+                              PayPal
+                            <% } else if(txn?.paymentMethod === 3) { %> 
+                              Stripe
+                            <%}%>
+                        </td>
+                        <td>
+                            <% if (txn?.status === 1) { %>
+                              <span class="badge bg-warning">Pending</span>
+                            <% } else if (txn?.status === 2) { %>
+                              <span class="badge bg-success">success</span>
+                            <% } else if (txn?.status === 3) { %>
+                              <span class="badge bg-danger">Failed</span>
+                            <% } %>
+                        </td>
+                        <td><%= txn?.created_at ? formatDateTime(txn?.created_at) : 'N/A' %></td>
+                    </tr>
+                <% }); } else { %>
+                    <tr>
+                        <td colspan="10" class="text-center text-muted">No product transaction found</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
