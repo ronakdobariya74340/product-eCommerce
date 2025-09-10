@@ -42,15 +42,7 @@ const userSchema = new Schema(
             type: String,
             default: "",
         },
-        google2faStatus:{
-            type: Number,
-            default: 0,
-        },
-        google2faSecret:{
-            type: String,
-            default: "",
-        },
-        membershipId: {
+        productCategoryId: {
             type: Array,
             default: [],
         },
@@ -64,10 +56,6 @@ const userSchema = new Schema(
                 date: { type: Date, default: Date.now },
             },
         ],
-        packLimit: {
-            type: Array,
-            default: [],
-        },
     },
     {
         versionKey: false,

@@ -38,7 +38,7 @@ $("#productImageInput").on("change", function (e) {
     if(combinedFile.length > MAX_FILE_COUNT) return $("#image-alert").text(`You can upload a maximum of ${MAX_FILE_COUNT} images`).addClass("text-danger");
 
     selectedfiles = combinedFile;
-    renderProductImage();
+    renderBannerImage();
 
     return selectedfiles;
 });
@@ -84,7 +84,7 @@ $("#add_product_banner").on("click", function (e) {
 $("#thumbnail-preview-container").on("click", ".remove-thumbnail", function () {
     const index = $(this).closest(".gallery-media").data("index");
     selectedfiles.splice(index, 1);
-    renderProductImage();
+    renderBannerImage();
 });
 
 $(document).on("click", ".edit-product-banner", function (e) {
@@ -117,9 +117,9 @@ $(document).on("click", ".edit-product-banner", function (e) {
             const $parent = $("#productBannerStatus").parent();
             $parent.removeClass("on off").addClass(status === 2 ? "on" : "off");
 
-            selectedfiles = image.map(img => `/images/BannerImages/${img}`);
+            selectedfiles = image.map((img) => img);
 
-            renderProductImage();
+            renderBannerImage();
         } else {
             showToast(response.flag, response.msg);
             $("#addEditProductBannerModal").modal("hide");
@@ -292,11 +292,11 @@ $("#productBannerStatus").on("change", function(e){
     };
 });
 
-function renderProductImage(){
+function renderBannerImage(){
     $("#thumbnail-preview-container").empty();
 
     selectedfiles.forEach((file, index) => {
-        if(typeof file === "string" && file.startsWith("/")) {
+        if(typeof file === "string" && file.startsWith("http://")) {
             fetch(file).then(response=> response.blob()).then(blob => {
                 const fileblob = new File([blob], file, { type: blob.type })
                 fileblob.isExist = true;

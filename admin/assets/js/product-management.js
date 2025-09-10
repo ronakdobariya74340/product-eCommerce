@@ -251,8 +251,8 @@ $(document).on("click", ".editProduct", function(e){
             const $parent = $("#product_status").parent();
             $parent.removeClass("on off").addClass(status === 2 ? "on" : "off");
 
-            selectedfiles = image.map(img => `/images/ProductImages/${img}`);
-            selectedBgImgfiles = backgroundImage.map(bg => `/images/ProductImages/${bg}`);
+            selectedfiles = image.map((img) => img);
+            selectedBgImgfiles = backgroundImage.map((bg) => bg);
 
             renderProductImage();
             renderBackgroundImage();
@@ -363,7 +363,7 @@ function renderProductImage(){
     $("#thumbnail-preview-container").empty();
 
     selectedfiles.forEach((file, index) => {
-        if(typeof file === "string" && file.startsWith("/")) {
+        if(typeof file === "string" && file.startsWith("http://")) {
             fetch(file).then(response=> response.blob()).then(blob => {
                 const fileblob = new File([blob], file, { type: blob.type })
                 fileblob.isExist = true;
@@ -380,7 +380,7 @@ function renderBackgroundImage(){
     $("#thumbnail_bgImg_preview_container").empty();
 
     selectedBgImgfiles.forEach((file, index) => {
-        if(typeof file === "string" && file.startsWith("/")) {
+        if(typeof file === "string" && file.startsWith("http://")) {
             fetch(file).then(response=> response.blob()).then(blob => {
                 const fileblob = new File([blob], file, { type: blob.type })
                 fileblob.isExist = true;

@@ -13,12 +13,17 @@ const CATEGORY_TYPE = {
     SINGER: 2,
 };
 
-const celebritySchema = new Schema(
+const productSchema = new Schema(
     {
         name: {
             type: String,
             required: true,
             trim: true,
+        },
+        productCategoryId:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "productCategory",
+            required: true
         },
         image: {
             type: Array,
@@ -28,33 +33,13 @@ const celebritySchema = new Schema(
             type: Array,
             default: [],
         },
-        celebrityAddress: {
+        productPrice: {
             type: String,
             default: "",
-        },
-        twitchUrl: {
-            type: String,
-            default: "",
-        },
-        youTubeUrl: {
-            type: String,
-            default: "",
-        },
-        twitterUrl: {
-            type: String,
-            default: "",
-        },
-        endTime: {
-            type: Date,
         },
         description: {
             type: String,
             default: "",
-        },
-        categoryType: {
-            type: Number,
-            enum: Object.values(CATEGORY_TYPE),
-            default: CATEGORY_TYPE.ACTOR,
         },
         status: {
             type: Number,
@@ -71,14 +56,14 @@ const celebritySchema = new Schema(
     },
 );
 
-celebritySchema.virtual('readable_created_at').get(function () {
+productSchema.virtual('readable_created_at').get(function () {
     return DateInHumanReadleFormat(this.created_at);
 });
 
-celebritySchema.virtual('formated_created_at').get(function () {
+productSchema.virtual('formated_created_at').get(function () {
   return moment(this.created_at).format('MMM DD, YYYY');
 });
 
-const Celebrity = mongoose.model("Celebrity", celebritySchema);
+const Product = mongoose.model("Product", productSchema);
 
-export default Celebrity;
+export default Product;

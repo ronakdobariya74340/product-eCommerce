@@ -688,7 +688,7 @@ export const getSettingsPage = async (req, res) => {
 
 export const getProductManagementPage = async (req, res) => {
    try {
-      const productCategory = await ProductCategory.find({ status: Constant.STATUS.ACTIVE }).select("name").sort({ created_at: -1 });
+      const productCategory = await ProductCategory.find({ status: Constant.PRODUCT_CATEGORY_STATUS.ACTIVE }).select("name").sort({ created_at: -1 });
 
       return res.render("product-management", {
          header: {
@@ -723,8 +723,18 @@ export const postAddProduct = async (req, res) => {
       if (!Array.isArray(req.files?.backgroung_image)) req.files.backgroung_image = [req.files?.backgroung_image];
 
       // image upload
-      const productImageArray = await uploadImage({ file: req.files?.product_image, path: Constant.PRODUCT_UPLOAD_PATH, prefix: "product_image" });
-      const backgroundImageArray = await uploadImage({ file: req.files?.backgroung_image, path: Constant.PRODUCT_UPLOAD_PATH, prefix: "backgroung_image" });
+      const productImageArray = await uploadImage({
+         file: req.files?.product_image,
+         path: Constant.PRODUCT_UPLOAD_PATH,
+         prefix: "product_image",
+         imgPath: "/images/ProductImages",
+      });
+      const backgroundImageArray = await uploadImage({
+         file: req.files?.backgroung_image,
+         path: Constant.PRODUCT_UPLOAD_PATH,
+         prefix: "backgroung_image",
+         imgPath: "/images/ProductImages",
+      });
 
       let payload = {
          name: param.name,
@@ -864,8 +874,18 @@ export const postUpdateProduct = async (req, res) => {
          return true;
       });
 
-      const productImageArray = await uploadImage({ file: req.files?.product_image, path: Constant.PRODUCT_UPLOAD_PATH, prefix: "product_Image" });
-      const backgroundImageArray = await uploadImage({ file: req.files?.backgroung_image, path: Constant.PRODUCT_UPLOAD_PATH, prefix: "backgroung_image" });
+      const productImageArray = await uploadImage({
+         file: req.files?.product_image,
+         path: Constant.PRODUCT_UPLOAD_PATH,
+         prefix: "product_Image",
+         imgPath: "/images/ProductImages",
+      });
+      const backgroundImageArray = await uploadImage({
+         file: req.files?.backgroung_image,
+         path: Constant.PRODUCT_UPLOAD_PATH,
+         prefix: "backgroung_image",
+         imgPath: "/images/ProductImages",
+      });
 
       let newProfileImage = [...existingImage, ...productImageArray];
       let newBackgroundImage = [...existingBgImage, ...backgroundImageArray];
@@ -1391,7 +1411,12 @@ export const postAddProductBanner = async (req, res) => {
       if (!Array.isArray(req.files?.banner_image)) req.files.banner_image = [req.files?.banner_image];
 
       // image upload
-      const bannerImageArray = await uploadImage({ file: req.files?.banner_image, path: Constant.BANNER_UPLOAD_PATH, prefix: "banner_image" });
+      const bannerImageArray = await uploadImage({
+         file: req.files?.banner_image,
+         path: Constant.BANNER_UPLOAD_PATH,
+         prefix: "banner_image",
+         imgPath: "/images/BannerImages",
+      });
 
       let payload = {
          name: param.name,
@@ -1503,7 +1528,12 @@ export const postUpdateProductBanner = async (req, res) => {
          return true;
       });
 
-      const bannerImageArray = await uploadImage({ file: req.files?.banner_image, path: Constant.BANNER_UPLOAD_PATH, prefix: "banner_image" });
+      const bannerImageArray = await uploadImage({
+         file: req.files?.banner_image,
+         path: Constant.BANNER_UPLOAD_PATH,
+         prefix: "banner_image",
+         imgPath: "/images/BannerImages",
+      });
 
       let newBannerImage = [...existingImage, ...bannerImageArray];
 

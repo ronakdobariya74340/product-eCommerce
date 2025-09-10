@@ -10,7 +10,6 @@ import { sendMail } from "../utils/sendMail.helper.js";
 import { paypalPayment, stripePayment } from "./payment.controller.js";
 import { syncCartToDB } from "./auth.controller.js";
 import User from "../models/user.models.js";
-import Celebrity from "../models/celebrity.model.js";
 import Membership from "../models/membership.model.js";
 import UserToken from "../models/userToken.model.js";
 import Giftcard from "../models/giftcard.model.js";
@@ -18,6 +17,8 @@ import Ticket from "../models/ticket.model.js";
 import TempPaymentData from "../models/tempPaymentData.model.js";
 import Cart from "../models/cart.model.js";
 import ResetPasswordToken from "../models/resetPasswordToken.model.js";
+import Product from "../models/product.model.js";
+import ProductBanner from "../models/productBanner.model.js";
 
 export const getHomePage = async (req, res) => {
     try {
@@ -27,13 +28,26 @@ export const getHomePage = async (req, res) => {
             userDetails = await User.findById(userId).select("-password -updated_at -updatedAt -__v");
         };
 
+        const productList = await Product.find({
+            status: constant.PRODUCT_STATUS.ACTIVE,
+        });
+
+        const bannerList = await ProductBanner.find({
+            status: constant.PRODUCT_BANNER_STATUS.ACTIVE,
+        }).select("image");
+
+        const bannerImageList = bannerList.map((banner) => banner.image).flat().filter(Boolean);
+
         return res.render("home", {
             header: {
                 id: "home",
                 title: "Home",
                 user: userDetails || null,
             },
-            body: {},
+            body: {
+                product: productList || [],
+                bannerImage: bannerImageList || [],
+            },
             footer: {
                 js: "",
             },
@@ -59,13 +73,22 @@ export const getProductDetails = async (req, res) => {
             userDetails = await User.findById(userId).select("-password -updated_at -updatedAt -__v");
         };
 
+        const productDetails = await Product.find({
+            _id: ObjectId(productId),
+            status: constant.PRODUCT_STATUS.ACTIVE,
+        });
+
+        if(!productDetails){
+            return res.redirect("/");
+        };
+
         return res.render("product-details", {
             header: {
                 title: "Product Details",
                 user: userDetails || null,
             },
             body: {
-                product: [],
+                product: productDetails,
             },
             footer: {
                 js: "product-details.js",
@@ -107,79 +130,6 @@ export const getProfile = async (req, res) => {
     }
 };
 
-export const getReedemGiftPage = async (req, res) => {
-    try {
-        const userId = req.userId;
-        const userDetails = await User.findById(userId).select("-password -updated_at -updatedAt -__v");
-        if (!userDetails) return res.json(errorResponse(messages.userNotFound));
-
-        // filter giftcard by userId
-        const result = await Giftcard.aggregate([
-            {
-                $match: {
-                    toEmail: userDetails.email,
-                    status: constant.GIFT_CARD_STATUS.REDEEMED
-                }
-            },
-            { $lookup: { from: "memberships", localField: "membershipId", foreignField: "_id", as: "membershipDetails" } },
-            { $unwind: { path: "$membershipDetails", preserveNullAndEmptyArrays: true } },
-            {
-                $group: {
-                    _id: null,
-                    totalEntries: {
-                        $sum: {
-                            $add: { $ifNull: ["$membershipDetails.membershipEntries", 0] },
-                        }
-                    },
-                    totalValue: { $sum: { $ifNull: ["$amount", 0] } },
-                    celebritySet: { $addToSet: "$celebrityId" },
-                    redeemCount: { $sum: 1 }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    totalEntries: 1,
-                    totalValue: 1,
-                    redeemCount: 1,
-                    totalCelebrity: { $size: "$celebritySet" }
-                }
-            }
-        ]);
-
-        const stats = result[0] || {
-            totalEntries: 0,
-            totalValue: 0,
-            redeemCount: 0,
-            totalCelebrity: 0
-        };
-
-        return res.render("users/redeem-gift", {
-            header: {
-                page: "Reedem Gift",
-                user: userDetails,
-                title: "Reedem Gift",
-                id: "reedem-gift",
-            },
-            body: {
-                user: userDetails,
-                redeemCount: stats.redeemCount,
-                totalValue: stats.totalValue,
-                totalEntries: stats.totalEntries,
-                totalCelebrity: stats.totalCelebrity,
-            },
-            footer: {
-                js: "redeem-giftcard.js"
-            },
-        });
-
-    } catch (error) {
-        log1(["Error in getReedemGiftPage----->", error]);
-        return res.json(errorResponse(messages.unexpectedDataError));
-    }
-}
-
-
 export const getCart = async (req, res) => {
     try {
         const cartData = await getCartFromCookies(req);
@@ -192,7 +142,7 @@ export const getCart = async (req, res) => {
             const memberIds = cartData.flatMap(c => c.membershipList.map(m => m.membershipId));
 
             const [celebrities, memberships] = await Promise.all([
-                Celebrity.find({ _id: { $in: celebIds } }).select('-__v'),
+                Product.find({ _id: { $in: celebIds } }).select('-__v'),
                 Membership.find({ _id: { $in: memberIds } }).select('-__v'),
             ]);
 

@@ -20,7 +20,7 @@
                             <div class="user-avatar celeb text-white">
                                 <% if (productBanner?.image?.length > 0) { %>
                                     <% for(let i = 0; i < productBanner?.image?.length; i++){ %>
-                                        <img src="/images/BannerImages/<%= productBanner?.image[i] %>" alt="Banner Image">
+                                        <img src="<%= productBanner?.image[i] %>" alt="Banner Image">
                                     <% } %>
                                 <% } %>
                             </div>

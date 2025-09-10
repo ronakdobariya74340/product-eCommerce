@@ -28,7 +28,7 @@
                             <div class="d-flex align-items-center">
                                 <div class="user-avatar celeb text-white">
                                     <% if (product?.image?.length > 0) { %>
-                                        <img src="/images/ProductImages/<%= product?.image[0] %>" alt="Product Image">
+                                        <img src="<%= product?.image[0] %>" alt="Product Image">
                                     <% } %>
                                 </div>
                                 <span class="ms-2 fs-6 celeb-veryfy"><%= product?.name %></span>
